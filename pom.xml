@@ -196,7 +196,7 @@ These include: bzip2, gzip, pack200, lzma, xz, Snappy, traditional Unix Compress
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
           <testExcludes>
-            <exclude>**/*</exclude> <!-- Exclude all test files -->
+            <exclude>**/*</exclude>
           </testExcludes>
           <compilerArgs>
             <arg>${grt-testing.plugin}</arg>
