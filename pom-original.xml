@@ -43,9 +43,6 @@ These include: bzip2, gzip, pack200, lzma, xz, Snappy, traditional Unix Compress
     <!-- configuration bits for cutting a release candidate -->
     <commons.release.version>${project.version}</commons.release.version>
     <commons.rc.version>RC1</commons.rc.version>
-    <grt-testing.basedir>${grt-testing.basedir}</grt-testing.basedir>
-    <grt-testing.major.jar>build/major/lib/major.jar</grt-testing.major.jar>
-    <grt-testing.plugin>${grt-testing.plugin}</grt-testing.plugin>
   </properties>
 
   <issueManagement>
@@ -54,13 +51,6 @@ These include: bzip2, gzip, pack200, lzma, xz, Snappy, traditional Unix Compress
   </issueManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>major</groupId>
-      <artifactId>major</artifactId>
-      <version>2.2.0</version>
-      <scope>system</scope>
-      <systemPath>${grt-testing.basedir}/${grt-testing.major.jar}</systemPath>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -187,20 +177,6 @@ These include: bzip2, gzip, pack200, lzma, xz, Snappy, traditional Unix Compress
           <ignorePathsToDelete>
             <ignorePathToDelete>javadocs</ignorePathToDelete>
           </ignorePathsToDelete>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-          <testExcludes>
-            <exclude>**/*</exclude>
-          </testExcludes>
-          <compilerArgs>
-            <arg>${grt-testing.plugin}</arg>
-          </compilerArgs>
         </configuration>
       </plugin>
     </plugins>
