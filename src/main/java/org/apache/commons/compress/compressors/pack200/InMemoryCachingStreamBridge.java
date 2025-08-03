@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,10 +31,12 @@ import java.io.InputStream;
  * @since 1.3
  */
 class InMemoryCachingStreamBridge extends StreamBridge {
+    @Impure
     InMemoryCachingStreamBridge() {
         super(new ByteArrayOutputStream());
     }
 
+    @Impure
     @Override
     InputStream getInputView() throws IOException {
         return new ByteArrayInputStream(((ByteArrayOutputStream) out)

@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.arj;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -55,6 +57,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
      *   in the archive
      * @throws ArchiveException
      */
+    @Impure
     public ArjArchiveInputStream(final InputStream inputStream,
             final String charsetName) throws ArchiveException {
         in = new DataInputStream(inputStream);
@@ -78,34 +81,40 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
      * @param inputStream the underlying stream, whose ownership is taken
      * @throws ArchiveException
      */
+    @Impure
     public ArjArchiveInputStream(final InputStream inputStream)
             throws ArchiveException {
         this(inputStream, "CP437");
     }
     
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();
     }
 
+    @Impure
     private int read8(final DataInputStream dataIn) throws IOException {
         int value = dataIn.readUnsignedByte();
         count(1);
         return value;
     }
 
+    @Impure
     private int read16(final DataInputStream dataIn) throws IOException {
         final int value = dataIn.readUnsignedShort();
         count(2);
         return Integer.reverseBytes(value) >>> 16;
     }
 
+    @Impure
     private int read32(final DataInputStream dataIn) throws IOException {
         final int value = dataIn.readInt();
         count(4);
         return Integer.reverseBytes(value);
     }
     
+    @Impure
     private String readString(final DataInputStream dataIn) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nextByte;
@@ -120,12 +129,14 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         }
     }
     
+    @Impure
     private void readFully(final DataInputStream dataIn, byte[] b)
         throws IOException {
         dataIn.readFully(b);
         count(b.length);
     }
     
+    @Impure
     private byte[] readHeader() throws IOException {
         boolean found = false;
         byte[] basicHeaderBytes = null;
@@ -155,6 +166,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         return basicHeaderBytes;
     }
     
+    @Impure
     private MainHeader readMainHeader() throws IOException {
         final byte[] basicHeaderBytes = readHeader();
         if (basicHeaderBytes == null) {
@@ -212,6 +224,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         return hdr;
     }
     
+    @Impure
     private LocalFileHeader readLocalFileHeader() throws IOException {
         final byte[] basicHeaderBytes = readHeader();
         if (basicHeaderBytes == null) {
@@ -267,6 +280,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         return localFileHeader;
     }
     
+    @Impure
     private void readExtraData(int firstHeaderSize, DataInputStream firstHeader,
                                LocalFileHeader localFileHeader) throws IOException {
         if (firstHeaderSize >= 33) {
@@ -290,6 +304,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
      *            the number of bytes to check
      * @return true, if this stream is an arj archive stream, false otherwise
      */
+    @Pure
     public static boolean matches(final byte[] signature, final int length) {
         return length >= 2 &&
                 (0xff & signature[0]) == ARJ_MAGIC_1 &&
@@ -299,6 +314,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
     /**
      * Gets the archive's recorded name.
      */
+    @Pure
     public String getArchiveName() {
         return mainHeader.name;
     }
@@ -306,10 +322,12 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
     /**
      * Gets the archive's comment.
      */
+    @Pure
     public String getArchiveComment() {
         return mainHeader.comment;
     }
     
+    @Impure
     @Override
     public ArjArchiveEntry getNextEntry() throws IOException {
         if (currentInputStream != null) {
@@ -334,11 +352,13 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         }
     }
     
+    @Pure
     @Override
     public boolean canReadEntryData(ArchiveEntry ae) {
         return currentLocalFileHeader.method == LocalFileHeader.Methods.STORED;
     }
     
+    @Impure
     @Override
     public int read(final byte[] b, final int off, final int len) throws IOException {
         if (currentLocalFileHeader.method != LocalFileHeader.Methods.STORED) {

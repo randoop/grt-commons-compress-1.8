@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.jar;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,15 +33,18 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
  */
 public class JarArchiveInputStream extends ZipArchiveInputStream {
 
+    @Impure
     public JarArchiveInputStream( final InputStream inputStream ) {
         super(inputStream);
     }
 
+    @Impure
     public JarArchiveEntry getNextJarEntry() throws IOException {
         ZipArchiveEntry entry = getNextZipEntry();
         return entry == null ? null : new JarArchiveEntry(entry);
     }
 
+    @Impure
     @Override
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextJarEntry();
@@ -56,6 +60,7 @@ public class JarArchiveInputStream extends ZipArchiveInputStream {
      *            the number of bytes to check
      * @return true, if this stream is a jar archive stream, false otherwise
      */
+    @Impure
     public static boolean matches(byte[] signature, int length ) {
         return ZipArchiveInputStream.matches(signature, length);
     }

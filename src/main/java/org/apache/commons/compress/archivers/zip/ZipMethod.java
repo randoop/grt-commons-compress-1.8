@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -181,6 +184,7 @@ public enum ZipMethod {
     /**
      * private constructor for enum style class.
      */
+    @Impure
     ZipMethod(int code) {
         this.code = code;
     }
@@ -192,6 +196,7 @@ public enum ZipMethod {
      * 
      * @return an integer code for the method
      */
+    @Pure
     public int getCode() {
         return code;
     }
@@ -201,6 +206,7 @@ public enum ZipMethod {
      * returns the {@link ZipMethod} for the given code or null if the
      * method is not known.
      */
+    @SideEffectFree
     public static ZipMethod getMethodByCode(int code) {
         return codeToEnum.get(Integer.valueOf(code));
     }

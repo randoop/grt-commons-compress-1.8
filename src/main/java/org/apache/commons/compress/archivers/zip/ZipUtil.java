@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -39,6 +42,7 @@ public abstract class ZipUtil {
      * @param time the <code>Date</code> to convert
      * @return the date as a <code>ZipLong</code>
      */
+    @Impure
     public static ZipLong toDosTime(Date time) {
         return new ZipLong(toDosTime(time.getTime()));
     }
@@ -50,6 +54,7 @@ public abstract class ZipUtil {
      * @param t number of milliseconds since the epoch
      * @return the date as a byte array
      */
+    @Impure
     public static byte[] toDosTime(long t) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(t);
@@ -75,6 +80,7 @@ public abstract class ZipUtil {
      * @param i the value to treat as unsigned int.
      * @return the unsigned int as a long.
      */
+    @Pure
     public static long adjustToLong(int i) {
         if (i < 0) {
             return 2 * ((long) Integer.MAX_VALUE) + 2 + i;
@@ -94,6 +100,7 @@ public abstract class ZipUtil {
      *        convenience).
      * @since 1.5
      */
+    @Impure
     public static byte[] reverse(final byte[] array) {
         final int z = array.length - 1; // position of last element
         for (int i = 0; i < array.length / 2; i++) {
@@ -111,6 +118,7 @@ public abstract class ZipUtil {
      * @param big BigInteger to convert.
      * @return long representation of the BigInteger.
      */
+    @Impure
     static long bigToLong(BigInteger big) {
         if (big.bitLength() <= 63) { // bitLength() doesn't count the sign bit.
             return big.longValue();
@@ -130,6 +138,7 @@ public abstract class ZipUtil {
      * @param l long to convert to BigInteger.
      * @return BigInteger representation of the provided long.
      */
+    @Impure
     static BigInteger longToBig(long l) {
         if (l < Integer.MIN_VALUE) {
             throw new IllegalArgumentException("Negative longs < -2^31 not permitted: [" + l + "]");
@@ -149,6 +158,7 @@ public abstract class ZipUtil {
      * @return int representation of the provided byte
      * @since 1.5
      */
+    @Pure
     public static int signedByteToUnsignedInt(byte b) {
         if (b >= 0) {
             return b;
@@ -165,6 +175,7 @@ public abstract class ZipUtil {
      * @throws IllegalArgumentException if the provided integer is not inside the range [0,255].
      * @since 1.5
      */
+    @Pure
     public static byte unsignedIntToSignedByte(int i) {
         if (i > 255 || i < 0) {
             throw new IllegalArgumentException("Can only convert non-negative integers between [0,255] to byte: [" + i + "]");
@@ -182,6 +193,7 @@ public abstract class ZipUtil {
      * @param zipDosTime contains the stored DOS time.
      * @return a Date instance corresponding to the given time.
      */
+    @Impure
     public static Date fromDosTime(ZipLong zipDosTime) {
         long dosTime = zipDosTime.getValue();
         return new Date(dosToJavaTime(dosTime));
@@ -191,6 +203,7 @@ public abstract class ZipUtil {
      * Converts DOS time to Java time (number of milliseconds since
      * epoch).
      */
+    @Impure
     public static long dosToJavaTime(long dosTime) {
         Calendar cal = Calendar.getInstance();
         // CheckStyle:MagicNumberCheck OFF - no point
@@ -210,6 +223,7 @@ public abstract class ZipUtil {
      * names/comments match those of the extra fields, transfer the
      * known Unicode values from the extra field.
      */
+    @Impure
     static void setNameAndCommentFromExtraFields(ZipArchiveEntry ze,
                                                  byte[] originalNameBytes,
                                                  byte[] commentBytes) {
@@ -240,6 +254,7 @@ public abstract class ZipUtil {
      * <p>If the field is null or the CRCs don't match, return null
      * instead.</p>
      */
+    @Impure
     private static 
         String getUnicodeStringIfOriginalMatches(AbstractUnicodeExtraField f,
                                                  byte[] orig) {
@@ -268,6 +283,7 @@ public abstract class ZipUtil {
      * Create a copy of the given array - or return null if the
      * argument is null.
      */
+    @SideEffectFree
     static byte[] copy(byte[] from) {
         if (from != null) {
             byte[] to = new byte[from.length];
@@ -280,6 +296,8 @@ public abstract class ZipUtil {
     /**
      * Whether this library is able to read or write the given entry.
      */
+    @Pure
+    @Impure
     static boolean canHandleEntryData(ZipArchiveEntry entry) {
         return supportsEncryptionOf(entry) && supportsMethodOf(entry);
     }
@@ -290,6 +308,8 @@ public abstract class ZipUtil {
      *
      * @return true if the entry isn't encrypted at all
      */
+    @Pure
+    @Impure
     private static boolean supportsEncryptionOf(ZipArchiveEntry entry) {
         return !entry.getGeneralPurposeBit().usesEncryption();
     }
@@ -300,6 +320,8 @@ public abstract class ZipUtil {
      *
      * @return true if the compression method is STORED or DEFLATED
      */
+    @Pure
+    @Impure
     private static boolean supportsMethodOf(ZipArchiveEntry entry) {
         return entry.getMethod() == ZipEntry.STORED
             || entry.getMethod() == ZipMethod.UNSHRINKING.getCode()
@@ -311,6 +333,7 @@ public abstract class ZipUtil {
      * Checks whether the entry requires features not (yet) supported
      * by the library and throws an exception if it does.
      */
+    @Impure
     static void checkRequestedFeatures(ZipArchiveEntry ze)
         throws UnsupportedZipFeatureException {
         if (!supportsEncryptionOf(ze)) {

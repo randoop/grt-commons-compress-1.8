@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 
 /**
  * Exception thrown by ArchiveStreamFactory if a format is requested/detected that doesn't support streaming.
@@ -34,6 +37,8 @@ public class StreamingNotSupportedException extends ArchiveException {
      * 
      * @param format the format that has been requested/detected.
      */
+    @SideEffectFree
+    @Impure
     public StreamingNotSupportedException(String format) {
         super("The " + format + " doesn't support streaming.");
         this.format = format;
@@ -44,6 +49,7 @@ public class StreamingNotSupportedException extends ArchiveException {
      * 
      * @return the format that has been requested/detected.
      */
+    @Pure
     public String getFormat() {
         return format;
     }

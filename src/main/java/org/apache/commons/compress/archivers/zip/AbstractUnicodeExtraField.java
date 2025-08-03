@@ -18,6 +18,9 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.CRC32;
 import java.util.zip.ZipException;
@@ -33,6 +36,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
     private byte[] unicodeName;
     private byte[] data;
 
+    @SideEffectFree
     protected AbstractUnicodeExtraField() {
     }
 
@@ -48,6 +52,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
      * @param len The length of the encoded filename or commentin
      * <code>bytes</code>.
      */
+    @Impure
     protected AbstractUnicodeExtraField(String text, byte[] bytes, int off, int len) {
         CRC32 crc32 = new CRC32();
         crc32.update(bytes, off, len);
@@ -68,10 +73,12 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
      * @param bytes The encoded of the filename or comment in the zip
      * file.
      */
+    @Impure
     protected AbstractUnicodeExtraField(String text, byte[] bytes) {
         this(text, bytes, 0, bytes.length);
     }
 
+    @Impure
     private void assembleData() {
         if (unicodeName == null) {
             return;
@@ -88,6 +95,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
      * @return The CRC32 checksum of the filename or comment as
      *         encoded in the central directory of the zip file.
      */
+    @Pure
     public long getNameCRC32() {
         return nameCRC32;
     }
@@ -96,6 +104,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
      * @param nameCRC32 The CRC32 checksum of the filename as encoded
      *         in the central directory of the zip file to set.
      */
+    @Impure
     public void setNameCRC32(long nameCRC32) {
         this.nameCRC32 = nameCRC32;
         data = null;
@@ -104,6 +113,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
     /**
      * @return The UTF-8 encoded name.
      */
+    @SideEffectFree
     public byte[] getUnicodeName() {
         byte[] b = null;
         if (unicodeName != null) {
@@ -116,6 +126,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
     /**
      * @param unicodeName The UTF-8 encoded name to set.
      */
+    @Impure
     public void setUnicodeName(byte[] unicodeName) {
         if (unicodeName != null) {
             this.unicodeName = new byte[unicodeName.length];
@@ -127,6 +138,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
         data = null;
     }
 
+    @Impure
     public byte[] getCentralDirectoryData() {
         if (data == null) {
             this.assembleData();
@@ -139,6 +151,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
         return b;
     }
 
+    @Impure
     public ZipShort getCentralDirectoryLength() {
         if (data == null) {
             assembleData();
@@ -146,14 +159,17 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
         return new ZipShort(data.length);
     }
 
+    @Impure
     public byte[] getLocalFileDataData() {
         return getCentralDirectoryData();
     }
 
+    @Impure
     public ZipShort getLocalFileDataLength() {
         return getCentralDirectoryLength();
     }
 
+    @Impure
     public void parseFromLocalFileData(byte[] buffer, int offset, int length)
         throws ZipException {
 
@@ -178,6 +194,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
      * Doesn't do anything special since this class always uses the
      * same data in central directory and local file data.
      */
+    @Impure
     public void parseFromCentralDirectoryData(byte[] buffer, int offset,
                                               int length)
         throws ZipException {

@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +34,7 @@ abstract class CoderBase {
     /**
      * @param acceptableOptions types that can be used as options for this codec.
      */
+    @SideEffectFree
     protected CoderBase(Class<?>... acceptableOptions) {
         this.acceptableOptions = acceptableOptions;
     }
@@ -38,6 +42,7 @@ abstract class CoderBase {
     /**
      * @return whether this method can extract options from the given object.
      */
+    @Pure
     boolean canAcceptOptions(Object opts) {
         for (Class<?> c : acceptableOptions) {
             if (c.isInstance(opts)) {
@@ -50,6 +55,7 @@ abstract class CoderBase {
     /**
      * @return property-bytes to write in a Folder block
      */
+    @Impure
     byte[] getOptionsAsProperties(Object options) {
         return NONE;
     }
@@ -57,6 +63,8 @@ abstract class CoderBase {
     /**
      * @return configuration options that have been used to create the given InputStream from the given Coder
      */
+    @SideEffectFree
+    @Impure
     Object getOptionsFromCoder(Coder coder, InputStream in) {
         return null;
     }
@@ -64,11 +72,13 @@ abstract class CoderBase {
     /**
      * @return a stream that reads from in using the configured coder and password.
      */
+    @Impure
     abstract InputStream decode(final InputStream in, final Coder coder, byte[] password) throws IOException;
 
     /**
      * @return a stream that writes to out using the given configuration.
      */
+    @Impure
     OutputStream encode(final OutputStream out, final Object options) throws IOException {
         throw new UnsupportedOperationException("method doesn't support writing");
     }
@@ -77,6 +87,7 @@ abstract class CoderBase {
      * If the option represents a number, return its integer
      * value, otherwise return the given default value.
      */
+    @Pure
     protected static int numberOptionOrDefault(Object options, int defaultValue) {
         return options instanceof Number ? ((Number) options).intValue() : defaultValue;
     }

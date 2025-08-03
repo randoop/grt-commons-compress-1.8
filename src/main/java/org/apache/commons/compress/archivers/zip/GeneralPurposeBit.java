@@ -16,6 +16,9 @@
  *
  */
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Parser/encoder for the "general purpose bit" field in ZIP's local
@@ -76,12 +79,14 @@ public final class GeneralPurposeBit {
     private int slidingDictionarySize;
     private int numberOfShannonFanoTrees;
 
+    @SideEffectFree
     public GeneralPurposeBit() {
     }
 
     /**
      * whether the current entry uses UTF8 for file name and comment.
      */
+    @Pure
     public boolean usesUTF8ForNames() {
         return languageEncodingFlag;
     }
@@ -89,6 +94,7 @@ public final class GeneralPurposeBit {
     /**
      * whether the current entry will use UTF8 for file name and comment.
      */
+    @Impure
     public void useUTF8ForNames(boolean b) {
         languageEncodingFlag = b;
     }
@@ -97,6 +103,7 @@ public final class GeneralPurposeBit {
      * whether the current entry uses the data descriptor to store CRC
      * and size information
      */
+    @Pure
     public boolean usesDataDescriptor() {
         return dataDescriptorFlag;
     }
@@ -105,6 +112,7 @@ public final class GeneralPurposeBit {
      * whether the current entry will use the data descriptor to store
      * CRC and size information
      */
+    @Impure
     public void useDataDescriptor(boolean b) {
         dataDescriptorFlag = b;
     }
@@ -112,6 +120,7 @@ public final class GeneralPurposeBit {
     /**
      * whether the current entry is encrypted
      */
+    @Pure
     public boolean usesEncryption() {
         return encryptionFlag;
     }
@@ -119,6 +128,7 @@ public final class GeneralPurposeBit {
     /**
      * whether the current entry will be encrypted
      */
+    @Impure
     public void useEncryption(boolean b) {
         encryptionFlag = b;
     }
@@ -126,6 +136,7 @@ public final class GeneralPurposeBit {
     /**
      * whether the current entry is encrypted using strong encryption
      */
+    @Pure
     public boolean usesStrongEncryption() {
         return encryptionFlag && strongEncryptionFlag;
     }
@@ -133,6 +144,7 @@ public final class GeneralPurposeBit {
     /**
      * whether the current entry will be encrypted  using strong encryption
      */
+    @Impure
     public void useStrongEncryption(boolean b) {
         strongEncryptionFlag = b;
         if (b) {
@@ -143,6 +155,7 @@ public final class GeneralPurposeBit {
     /**
      * Returns the sliding dictionary size used by the compression method 6 (imploding).
      */
+    @Pure
     int getSlidingDictionarySize() {
         return slidingDictionarySize;
     }
@@ -150,6 +163,7 @@ public final class GeneralPurposeBit {
     /**
      * Returns the number of trees used by the compression method 6 (imploding).
      */
+    @Pure
     int getNumberOfShannonFanoTrees() {
         return numberOfShannonFanoTrees;
     }
@@ -157,6 +171,7 @@ public final class GeneralPurposeBit {
     /**
      * Encodes the set bits in a form suitable for ZIP archives.
      */
+    @Impure
     public byte[] encode() {
         return 
             ZipShort.getBytes((dataDescriptorFlag ? DATA_DESCRIPTOR_FLAG : 0)
@@ -175,6 +190,7 @@ public final class GeneralPurposeBit {
      * @param data local file header or a central directory entry.
      * @param offset offset at which the general purpose bit starts
      */
+    @Impure
     public static GeneralPurposeBit parse(final byte[] data, final int offset) {
         final int generalPurposeFlag = ZipShort.getValue(data, offset);
         GeneralPurposeBit b = new GeneralPurposeBit();
@@ -187,6 +203,7 @@ public final class GeneralPurposeBit {
         return b;
     }
 
+    @Pure
     @Override
     public int hashCode() {
         return 3 * (7 * (13 * (17 * (encryptionFlag ? 1 : 0)
@@ -195,6 +212,7 @@ public final class GeneralPurposeBit {
                     + (dataDescriptorFlag ? 1 : 0));
     }
 
+    @Pure
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof GeneralPurposeBit)) {

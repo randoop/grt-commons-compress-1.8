@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 
 
@@ -27,17 +28,21 @@ import java.io.IOException;
 public class DumpArchiveException extends IOException {
     private static final long serialVersionUID = 1L;
 
+    @Impure
     public DumpArchiveException() {
     }
 
+    @Impure
     public DumpArchiveException(String msg) {
         super(msg);
     }
 
+    @Impure
     public DumpArchiveException(Throwable cause) {
         initCause(cause);
     }
 
+    @Impure
     public DumpArchiveException(String msg, Throwable cause) {
         super(msg);
         initCause(cause);

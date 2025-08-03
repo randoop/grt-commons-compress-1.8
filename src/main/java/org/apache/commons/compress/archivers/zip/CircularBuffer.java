@@ -18,6 +18,9 @@
  */
 
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Circular byte buffer.
@@ -39,6 +42,7 @@ class CircularBuffer {
     /** Index of the next data written in the buffer */
     private int writeIndex;
 
+    @SideEffectFree
     CircularBuffer(int size) {
         this.size = size;
         buffer = new byte[size];
@@ -47,6 +51,7 @@ class CircularBuffer {
     /**
      * Tells if a new byte can be read from the buffer.
      */
+    @Pure
     public boolean available() {
         return readIndex != writeIndex;
     }
@@ -54,6 +59,7 @@ class CircularBuffer {
     /**
      * Writes a byte to the buffer.
      */
+    @Impure
     public void put(int value) {
         buffer[writeIndex] = (byte) value;
         writeIndex = (writeIndex + 1) % size;
@@ -62,6 +68,7 @@ class CircularBuffer {
     /**
      * Reads a byte from the buffer.
      */
+    @Impure
     public int get() {
         if (available()) {
             int value = buffer[readIndex];
@@ -78,6 +85,7 @@ class CircularBuffer {
      * @param distance the distance from the current write position
      * @param length   the number of bytes to copy
      */
+    @Impure
     public void copy(int distance, int length) {
         int pos1 = writeIndex - distance;
         int pos2 = pos1 + length;

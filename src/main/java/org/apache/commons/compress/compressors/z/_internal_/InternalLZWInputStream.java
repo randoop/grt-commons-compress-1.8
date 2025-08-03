@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors.z._internal_;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -49,15 +50,18 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
     private byte[] outputStack;
     private int outputStackLocation;
 
+    @Impure
     protected InternalLZWInputStream(InputStream inputStream) {
         this.in = inputStream;
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();
     }
     
+    @Impure
     @Override
     public int read() throws IOException {
         int ret = read(oneByte);
@@ -67,6 +71,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
         return 0xff & oneByte[0];
     }
     
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int bytesRead = readFromStack(b, off, len);
@@ -88,17 +93,20 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
     /**
      * Read the next code and expand it.
      */
+    @Impure
     protected abstract int decompressNextSymbol() throws IOException;
 
     /**
      * Add a new entry to the dictionary.
      */
+    @Impure
     protected abstract int addEntry(int previousCode, byte character)
         throws IOException;
 
     /**
      * Sets the clear code based on the code size.
      */
+    @Impure
     protected void setClearCode(int codeSize) {
         clearCode = (1 << (codeSize - 1));
     }
@@ -106,6 +114,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
     /**
      * Initializes the arrays based on the maximum code size.
      */
+    @Impure
     protected void initializeTables(int maxCodeSize) {
         final int maxTableSize = 1 << maxCodeSize;
         prefixes = new int[maxTableSize];
@@ -122,6 +131,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
     /**
      * Reads the next code from the stream.
      */
+    @Impure
     protected int readNextCode() throws IOException {
         while (bitsCachedSize < codeSize) {
             final int nextByte = in.read();
@@ -142,6 +152,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
      * Adds a new entry if the maximum table size hasn't been exceeded
      * and returns the new index.
      */
+    @Impure
     protected int addEntry(int previousCode, byte character, int maxTableSize) {
         if (tableSize < maxTableSize) {
             final int index = tableSize;
@@ -156,6 +167,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
     /**
      * Add entry for repeat of previousCode we haven't added, yet.
      */
+    @Impure
     protected int addRepeatOfPreviousCode() throws IOException {
         if (previousCode == -1) {
             // can't have a repeat for the very first code
@@ -172,6 +184,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
      * Expands the entry with index code to the output stack and may
      * create a new entry
      */
+    @Impure
     protected int expandCodeToOutputStack(int code, boolean addedUnfinishedEntry)
         throws IOException {
         for (int entry = code; entry >= 0; entry = prefixes[entry]) {
@@ -184,6 +197,7 @@ public abstract class InternalLZWInputStream extends CompressorInputStream {
         return outputStackLocation;
     }
 
+    @Impure
     private int readFromStack(byte[] b, int off, int len) {
         int remainingInStack = outputStack.length - outputStackLocation;
         if (remainingInStack > 0) {

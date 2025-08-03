@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,6 +131,7 @@ public class ArchiveStreamFactory {
      * @return entry encoding, or null
      * @since 1.5
      */
+    @Pure
     public String getEntryEncoding() {
         return entryEncoding;
     }
@@ -139,6 +142,7 @@ public class ArchiveStreamFactory {
      * @param entryEncoding the entry encoding, null uses the default.
      * @since 1.5
      */
+    @Impure
     public void setEntryEncoding(String entryEncoding) {
         this.entryEncoding = entryEncoding;
     }
@@ -154,6 +158,7 @@ public class ArchiveStreamFactory {
      * read from a stream
      * @throws IllegalArgumentException if the archiver name or stream is null
      */
+    @Impure
     public ArchiveInputStream createArchiveInputStream(
             final String archiverName, final InputStream in)
             throws ArchiveException {
@@ -225,6 +230,7 @@ public class ArchiveStreamFactory {
      * written to a stream
      * @throws IllegalArgumentException if the archiver name or stream is null
      */
+    @Impure
     public ArchiveOutputStream createArchiveOutputStream(
             final String archiverName, final OutputStream out)
             throws ArchiveException {
@@ -280,6 +286,7 @@ public class ArchiveStreamFactory {
      * read from a stream
      * @throws IllegalArgumentException if the stream is null or does not support mark
      */
+    @Impure
     public ArchiveInputStream createArchiveInputStream(final InputStream in)
             throws ArchiveException {
         if (in == null) {

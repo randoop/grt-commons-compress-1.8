@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors.gzip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -64,6 +65,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
     /**
      * Creates a gzip compressed output stream with the default parameters.
      */
+    @Impure
     public GzipCompressorOutputStream(OutputStream out) throws IOException {
         this(out, new GzipParameters());
     }
@@ -73,6 +75,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.7
      */
+    @Impure
     public GzipCompressorOutputStream(OutputStream out, GzipParameters parameters) throws IOException {
         this.out = out;
         this.deflater = new Deflater(parameters.getCompressionLevel(), true);
@@ -80,6 +83,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         writeHeader(parameters);
     }
 
+    @Impure
     private void writeHeader(GzipParameters parameters) throws IOException {
         String filename = parameters.getFilename();
         String comment = parameters.getComment();
@@ -116,6 +120,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         }
     }
 
+    @Impure
     private void writeTrailer() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -125,6 +130,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         out.write(buffer.array());
     }
 
+    @Impure
     @Override
     public void write(int b) throws IOException {
         write(new byte[]{(byte) (b & 0xff)}, 0, 1);
@@ -135,6 +141,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.1
      */
+    @Impure
     @Override
     public void write(byte[] buffer) throws IOException {
         write(buffer, 0, buffer.length);
@@ -145,6 +152,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.1
      */
+    @Impure
     @Override
     public void write(byte[] buffer, int offset, int length) throws IOException {
         if (deflater.finished()) {
@@ -161,6 +169,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         }
     }
 
+    @Impure
     private void deflate() throws IOException {
         int length = deflater.deflate(deflateBuffer, 0, deflateBuffer.length);
         if (length > 0) {
@@ -173,6 +182,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.7
      */
+    @Impure
     public void finish() throws IOException {
         if (!deflater.finished()) {
             deflater.finish();
@@ -190,11 +200,13 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.7
      */
+    @Impure
     @Override
     public void flush() throws IOException {
         out.flush();
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         if (!closed) {

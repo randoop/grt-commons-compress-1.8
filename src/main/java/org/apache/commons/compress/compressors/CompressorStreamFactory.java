@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -127,6 +128,7 @@ public class CompressorStreamFactory {
      *                          to the next byte after the stream
      * @since 1.5
      */
+    @Impure
     public void setDecompressConcatenated(boolean decompressConcatenated) {
         this.decompressConcatenated = decompressConcatenated;
     }
@@ -142,6 +144,7 @@ public class CompressorStreamFactory {
      * @throws IllegalArgumentException if the stream is null or does not support mark
      * @since 1.1
      */
+    @Impure
     public CompressorInputStream createCompressorInputStream(final InputStream in)
             throws CompressorException {
         if (in == null) {
@@ -196,6 +199,7 @@ public class CompressorStreamFactory {
      * @throws CompressorException if the compressor name is not known
      * @throws IllegalArgumentException if the name or input stream is null
      */
+    @Impure
     public CompressorInputStream createCompressorInputStream(final String name,
             final InputStream in) throws CompressorException {
         if (name == null || in == null) {
@@ -253,6 +257,7 @@ public class CompressorStreamFactory {
      * @throws CompressorException if the archiver name is not known
      * @throws IllegalArgumentException if the archiver name or stream is null
      */
+    @Impure
     public CompressorOutputStream createCompressorOutputStream(
             final String name, final OutputStream out)
             throws CompressorException {

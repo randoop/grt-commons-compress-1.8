@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.changes;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class ChangeSetResults {
      * Adds the filename of a recently deleted file to the result list.
      * @param fileName the file which has been deleted
      */
+    @Impure
     void deleted(String fileName) {
         deleted.add(fileName);
     }
@@ -42,6 +45,7 @@ public class ChangeSetResults {
      * copied from the source stream to the target stream.
      * @param fileName the file name which has been added from the original stream
      */
+    @Impure
     void addedFromStream(String fileName) {
         addedFromStream.add(fileName);
     }
@@ -51,6 +55,7 @@ public class ChangeSetResults {
      * copied from the changeset to the target stream
      * @param fileName the name of the file
      */
+    @Impure
     void addedFromChangeSet(String fileName) {
         addedFromChangeSet.add(fileName);
     }
@@ -59,6 +64,7 @@ public class ChangeSetResults {
      * Returns a list of filenames which has been added from the changeset
      * @return the list of filenames
      */
+    @Pure
     public List<String> getAddedFromChangeSet() {
         return addedFromChangeSet;
     }
@@ -67,6 +73,7 @@ public class ChangeSetResults {
      * Returns a list of filenames which has been added from the original stream
      * @return the list of filenames
      */
+    @Pure
     public List<String> getAddedFromStream() {
         return addedFromStream;
     }
@@ -75,6 +82,7 @@ public class ChangeSetResults {
      * Returns a list of filenames which has been deleted
      * @return the list of filenames
      */
+    @Pure
     public List<String> getDeleted() {
         return deleted;
     }
@@ -84,6 +92,7 @@ public class ChangeSetResults {
      * @param filename the filename to check
      * @return true, if this filename already has been added
      */
+    @Pure
     boolean hasBeenAdded(String filename) {
         if(addedFromChangeSet.contains(filename) || addedFromStream.contains(filename)) {
             return true;

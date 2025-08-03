@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * Compresses the given stream, caching the compressed data in
      * memory.
      */
+    @Impure
     public Pack200CompressorOutputStream(final OutputStream out)
         throws IOException {
         this(out, Pack200Strategy.IN_MEMORY);
@@ -53,6 +55,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * Compresses the given stream using the given strategy to cache
      * the results.
      */
+    @Impure
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Pack200Strategy mode)
         throws IOException {
@@ -63,6 +66,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * Compresses the given stream, caching the compressed data in
      * memory and using the given properties.
      */
+    @Impure
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Map<String, String> props)
         throws IOException {
@@ -73,6 +77,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * Compresses the given stream using the given strategy to cache
      * the results and the given properties.
      */
+    @Impure
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Pack200Strategy mode,
                                          final Map<String, String> props)
@@ -82,21 +87,25 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
         properties = props;
     }
 
+    @Impure
     @Override
     public void write(int b) throws IOException {
         streamBridge.write(b);
     }
 
+    @Impure
     @Override
     public void write(byte[] b) throws IOException {
         streamBridge.write(b);
     }
 
+    @Impure
     @Override
     public void write(byte[] b, int from, int length) throws IOException {
         streamBridge.write(b, from, length);
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         finish();
@@ -107,6 +116,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
         }
     }
 
+    @Impure
     public void finish() throws IOException {
         if (!finished) {
             finished = true;

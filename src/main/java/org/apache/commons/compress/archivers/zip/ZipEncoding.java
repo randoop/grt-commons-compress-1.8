@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -49,6 +50,7 @@ public interface ZipEncoding {
      * @param name A filename or ZIP comment.
      * @return Whether the given name may be encoded with out any losses.
      */
+    @Impure
     boolean canEncode(String name);
 
     /**
@@ -73,6 +75,7 @@ public interface ZipEncoding {
      *         to the end of the encoded result.
      * @throws IOException 
      */
+    @Impure
     ByteBuffer encode(String name) throws IOException;
 
     /**
@@ -80,5 +83,6 @@ public interface ZipEncoding {
      * @return The decoded string.
      * @throws IOException 
      */
+    @Impure
     String decode(byte [] data) throws IOException;
 }

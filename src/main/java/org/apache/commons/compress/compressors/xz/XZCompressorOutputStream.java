@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors.xz;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.tukaani.xz.LZMA2Options;
@@ -36,6 +37,7 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * Creates a new XZ compressor using the default LZMA2 options.
      * This is equivalent to <code>XZCompressorOutputStream(6)</code>.
      */
+    @Impure
     public XZCompressorOutputStream(OutputStream outputStream)
             throws IOException {
         out = new XZOutputStream(outputStream, new LZMA2Options());
@@ -54,16 +56,19 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * 16&nbsp;MiB, or 32&nbsp;MiB, it is waste of memory to use the
      * presets 7, 8, or 9, respectively.
      */
+    @Impure
     public XZCompressorOutputStream(OutputStream outputStream, int preset)
             throws IOException {
         out = new XZOutputStream(outputStream, new LZMA2Options(preset));
     }
 
+    @Impure
     @Override
     public void write(int b) throws IOException {
         out.write(b);
     }
 
+    @Impure
     @Override
     public void write(byte[] buf, int off, int len) throws IOException {
         out.write(buf, off, len);
@@ -75,6 +80,7 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * the output stream. Calling this function very often may increase
      * the compressed file size a lot.
      */
+    @Impure
     @Override
     public void flush() throws IOException {
         out.flush();
@@ -84,10 +90,12 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * Finishes compression without closing the underlying stream.
      * No more data can be written to this stream after finishing.
      */
+    @Impure
     public void finish() throws IOException {
         out.finish();
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         out.close();

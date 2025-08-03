@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,10 +30,13 @@ import org.tukaani.xz.LZMA2InputStream;
 import org.tukaani.xz.LZMA2Options;
 
 class LZMA2Decoder extends CoderBase {
+    @SideEffectFree
+    @Impure
     LZMA2Decoder() {
         super(LZMA2Options.class, Number.class);
     }
 
+    @Impure
     @Override
     InputStream decode(final InputStream in, final Coder coder, byte[] password) throws IOException {
         try {
@@ -41,6 +47,7 @@ class LZMA2Decoder extends CoderBase {
         }
     }
 
+    @Impure
     @Override
     OutputStream encode(final OutputStream out, final Object opts)
         throws IOException {
@@ -49,6 +56,7 @@ class LZMA2Decoder extends CoderBase {
         return options.getOutputStream(wrapped);
     }
 
+    @Impure
     @Override
     byte[] getOptionsAsProperties(Object opts) {
         int dictSize = getDictSize(opts);
@@ -59,11 +67,14 @@ class LZMA2Decoder extends CoderBase {
         };
     }
 
+    @SideEffectFree
+    @Impure
     @Override
     Object getOptionsFromCoder(Coder coder, InputStream in) {
         return Integer.valueOf(getDictionarySize(coder));
     }
 
+    @Impure
     private int getDictSize(Object opts) {
         if (opts instanceof LZMA2Options) {
             return ((LZMA2Options) opts).getDictSize();
@@ -71,6 +82,7 @@ class LZMA2Decoder extends CoderBase {
         return numberOptionOrDefault(opts);
     }
 
+    @Pure
     private int getDictionarySize(Coder coder) throws IllegalArgumentException {
         final int dictionarySizeBits = 0xff & coder.properties[0];
         if ((dictionarySizeBits & (~0x3f)) != 0) {
@@ -85,6 +97,7 @@ class LZMA2Decoder extends CoderBase {
         return (2 | (dictionarySizeBits & 0x1)) << (dictionarySizeBits / 2 + 11);
     }
 
+    @Impure
     private LZMA2Options getOptions(Object opts) throws IOException {
         if (opts instanceof LZMA2Options) {
             return (LZMA2Options) opts;
@@ -94,6 +107,8 @@ class LZMA2Decoder extends CoderBase {
         return options;
     }
 
+    @Pure
+    @Impure
     private int numberOptionOrDefault(Object opts) {
         return numberOptionOrDefault(opts, LZMA2Options.DICT_SIZE_DEFAULT);
     }

@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.zip.ZipException;
 
 /**
@@ -32,6 +35,7 @@ public final class JarMarker implements ZipExtraField {
     private static final JarMarker DEFAULT = new JarMarker();
 
     /** No-arg constructor */
+    @SideEffectFree
     public JarMarker() {
         // empty
     }
@@ -40,6 +44,7 @@ public final class JarMarker implements ZipExtraField {
      * Since JarMarker is stateless we can always use the same instance.
      * @return the DEFAULT jarmaker.
      */
+    @Pure
     public static JarMarker getInstance() {
         return DEFAULT;
     }
@@ -48,6 +53,7 @@ public final class JarMarker implements ZipExtraField {
      * The Header-ID.
      * @return the header id
      */
+    @Pure
     public ZipShort getHeaderId() {
         return ID;
     }
@@ -57,6 +63,7 @@ public final class JarMarker implements ZipExtraField {
      * Header-ID or length specifier.
      * @return 0
      */
+    @Pure
     public ZipShort getLocalFileDataLength() {
         return NULL;
     }
@@ -66,6 +73,7 @@ public final class JarMarker implements ZipExtraField {
      * Header-ID or length specifier.
      * @return 0
      */
+    @Pure
     public ZipShort getCentralDirectoryLength() {
         return NULL;
     }
@@ -75,6 +83,7 @@ public final class JarMarker implements ZipExtraField {
      * or length specifier.
      * @return the data
      */
+    @Pure
     public byte[] getLocalFileDataData() {
         return NO_BYTES;
     }
@@ -84,6 +93,7 @@ public final class JarMarker implements ZipExtraField {
      * length specifier.
      * @return the data
      */
+    @Pure
     public byte[] getCentralDirectoryData() {
         return NO_BYTES;
     }
@@ -96,6 +106,7 @@ public final class JarMarker implements ZipExtraField {
      *
      * @throws ZipException on error
      */
+    @Impure
     public void parseFromLocalFileData(byte[] data, int offset, int length)
         throws ZipException {
         if (length != 0) {
@@ -107,6 +118,7 @@ public final class JarMarker implements ZipExtraField {
      * Doesn't do anything special since this class always uses the
      * same data in central directory and local file data.
      */
+    @Impure
     public void parseFromCentralDirectoryData(byte[] buffer, int offset,
                                               int length)
         throws ZipException {

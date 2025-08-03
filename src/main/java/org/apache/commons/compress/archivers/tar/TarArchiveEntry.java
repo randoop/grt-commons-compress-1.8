@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.tar;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -182,6 +185,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
     /**
      * Construct an empty entry and prepares the header values.
      */
+    @SideEffectFree
     private TarArchiveEntry() {
         String user = System.getProperty("user.name", "");
 
@@ -199,6 +203,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param name the entry name
      */
+    @Impure
     public TarArchiveEntry(String name) {
         this(name, false);
     }
@@ -213,6 +218,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @Impure
     public TarArchiveEntry(String name, boolean preserveLeadingSlashes) {
         this();
 
@@ -232,6 +238,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param name the entry name
      * @param linkFlag the entry link flag.
      */
+    @Impure
     public TarArchiveEntry(String name, byte linkFlag) {
         this(name, linkFlag, false);
     }
@@ -246,6 +253,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * 
      * @since 1.5
      */
+    @Impure
     public TarArchiveEntry(String name, byte linkFlag, boolean preserveLeadingSlashes) {
         this(name, preserveLeadingSlashes);
         this.linkFlag = linkFlag;
@@ -262,6 +270,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param file The file that the entry represents.
      */
+    @SideEffectFree
+    @Impure
     public TarArchiveEntry(File file) {
         this(file, normalizeFileName(file.getPath(), false));
     }
@@ -273,6 +283,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param file The file that the entry represents.
      * @param fileName the name to be used for the entry.
      */
+    @SideEffectFree
     public TarArchiveEntry(File file, String fileName) {
         this.file = file;
 
@@ -304,6 +315,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param headerBuf The header bytes from a tar archive entry.
      * @throws IllegalArgumentException if any of the numeric fields have an invalid format
      */
+    @Impure
     public TarArchiveEntry(byte[] headerBuf) {
         this();
         parseTarHeader(headerBuf);
@@ -318,6 +330,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @since 1.4
      * @throws IllegalArgumentException if any of the numeric fields have an invalid format
      */
+    @Impure
     public TarArchiveEntry(byte[] headerBuf, ZipEncoding encoding)
         throws IOException {
         this();
@@ -331,6 +344,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param it Entry to be checked for equality.
      * @return True if the entries are equal.
      */
+    @Pure
+    @Impure
     public boolean equals(TarArchiveEntry it) {
         return getName().equals(it.getName());
     }
@@ -342,6 +357,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param it Entry to be checked for equality.
      * @return True if the entries are equal.
      */
+    @Pure
+    @Impure
     @Override
     public boolean equals(Object it) {
         if (it == null || getClass() != it.getClass()) {
@@ -355,6 +372,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return the entry hashcode
      */
+    @Pure
+    @Impure
     @Override
     public int hashCode() {
         return getName().hashCode();
@@ -368,6 +387,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param desc Entry to be checked as a descendent of this.
      * @return True if entry is a descendant of this.
      */
+    @Pure
+    @Impure
     public boolean isDescendent(TarArchiveEntry desc) {
         return desc.getName().startsWith(getName());
     }
@@ -377,6 +398,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's name.
      */
+    @Pure
     public String getName() {
         return name.toString();
     }
@@ -386,6 +408,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param name This entry's new name.
      */
+    @Impure
     public void setName(String name) {
         this.name = normalizeFileName(name, false);
     }
@@ -395,6 +418,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param mode the mode for this entry
      */
+    @Impure
     public void setMode(int mode) {
         this.mode = mode;
     }
@@ -404,6 +428,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's link name.
      */
+    @Pure
     public String getLinkName() {
         return linkName.toString();
     }
@@ -415,6 +440,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @Impure
     public void setLinkName(String link) {
         this.linkName = link;
     }
@@ -424,6 +450,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's user id.
      */
+    @Pure
     public int getUserId() {
         return userId;
     }
@@ -433,6 +460,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param userId This entry's new user id.
      */
+    @Impure
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -442,6 +470,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's group id.
      */
+    @Pure
     public int getGroupId() {
         return groupId;
     }
@@ -451,6 +480,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param groupId This entry's new group id.
      */
+    @Impure
     public void setGroupId(int groupId) {
         this.groupId = groupId;
     }
@@ -460,6 +490,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's user name.
      */
+    @Pure
     public String getUserName() {
         return userName.toString();
     }
@@ -469,6 +500,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param userName This entry's new user name.
      */
+    @Impure
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -478,6 +510,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's group name.
      */
+    @Pure
     public String getGroupName() {
         return groupName.toString();
     }
@@ -487,6 +520,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param groupName This entry's new group name.
      */
+    @Impure
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -497,6 +531,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param userId This entry's new user id.
      * @param groupId This entry's new group id.
      */
+    @Impure
     public void setIds(int userId, int groupId) {
         setUserId(userId);
         setGroupId(groupId);
@@ -508,6 +543,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param userName This entry's new user name.
      * @param groupName This entry's new group name.
      */
+    @Impure
     public void setNames(String userName, String groupName) {
         setUserName(userName);
         setGroupName(groupName);
@@ -519,6 +555,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param time This entry's new modification time.
      */
+    @Impure
     public void setModTime(long time) {
         modTime = time / MILLIS_PER_SECOND;
     }
@@ -528,6 +565,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param time This entry's new modification time.
      */
+    @Impure
     public void setModTime(Date time) {
         modTime = time.getTime() / MILLIS_PER_SECOND;
     }
@@ -537,10 +575,12 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return time This entry's new modification time.
      */
+    @Impure
     public Date getModTime() {
         return new Date(modTime * MILLIS_PER_SECOND);
     }
 
+    @Impure
     public Date getLastModifiedDate() {
         return getModTime();
     }
@@ -552,6 +592,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @see TarUtils#verifyCheckSum(byte[])
      * @since 1.5
      */
+    @Pure
     public boolean isCheckSumOK() {
         return checkSumOK;
     }
@@ -561,6 +602,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's file.
      */
+    @Pure
     public File getFile() {
         return file;
     }
@@ -570,6 +612,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's mode.
      */
+    @Pure
     public int getMode() {
         return mode;
     }
@@ -579,6 +622,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's file size.
      */
+    @Pure
     public long getSize() {
         return size;
     }
@@ -589,6 +633,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param size This entry's new file size.
      * @throws IllegalArgumentException if the size is &lt; 0.
      */
+    @Impure
     public void setSize(long size) {
         if (size < 0){
             throw new IllegalArgumentException("Size is out of range: "+size);
@@ -602,6 +647,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @return This entry's major device number.
      * @since 1.4
      */
+    @Pure
     public int getDevMajor() {
         return devMajor;
     }
@@ -613,6 +659,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @throws IllegalArgumentException if the devNo is &lt; 0.
      * @since 1.4
      */
+    @Impure
     public void setDevMajor(int devNo) {
         if (devNo < 0){
             throw new IllegalArgumentException("Major device number is out of "
@@ -627,6 +674,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @return This entry's minor device number.
      * @since 1.4
      */
+    @Pure
     public int getDevMinor() {
         return devMinor;
     }
@@ -638,6 +686,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @throws IllegalArgumentException if the devNo is &lt; 0.
      * @since 1.4
      */
+    @Impure
     public void setDevMinor(int devNo) {
         if (devNo < 0){
             throw new IllegalArgumentException("Minor device number is out of "
@@ -652,6 +701,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return true if an extension sparse header follows.
      */
+    @Pure
     public boolean isExtended() {
         return isExtended;
     }
@@ -661,6 +711,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return This entry's real file size.
      */
+    @Pure
     public long getRealSize() {
         return realSize;
     }
@@ -670,6 +721,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return true if this is a sparse extension provided by GNU tar
      */
+    @Pure
     public boolean isGNUSparse() {
         return linkFlag == LF_GNUTYPE_SPARSE;
     }
@@ -679,6 +731,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return true if this is a long name extension provided by GNU tar
      */
+    @Pure
     public boolean isGNULongLinkEntry() {
         return linkFlag == LF_GNUTYPE_LONGLINK
             && name.equals(GNU_LONGLINK);
@@ -689,6 +742,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return true if this is a long name extension provided by GNU tar
      */
+    @Pure
     public boolean isGNULongNameEntry() {
         return linkFlag == LF_GNUTYPE_LONGNAME
             && name.equals(GNU_LONGLINK);
@@ -702,6 +756,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @since 1.1
      * 
      */
+    @Pure
     public boolean isPaxHeader(){
         return linkFlag == LF_PAX_EXTENDED_HEADER_LC
             || linkFlag == LF_PAX_EXTENDED_HEADER_UC;
@@ -714,6 +769,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @Pure
     public boolean isGlobalPaxHeader(){
         return linkFlag == LF_PAX_GLOBAL_EXTENDED_HEADER;
     }
@@ -723,6 +779,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return True if this entry is a directory.
      */
+    @SideEffectFree
+    @Impure
     public boolean isDirectory() {
         if (file != null) {
             return file.isDirectory();
@@ -744,6 +802,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @SideEffectFree
+    @Impure
     public boolean isFile() {
         if (file != null) {
             return file.isFile();
@@ -759,6 +819,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @Pure
     public boolean isSymbolicLink() {
         return linkFlag == LF_SYMLINK;
     }
@@ -768,6 +829,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @Pure
     public boolean isLink() {
         return linkFlag == LF_LINK;
     }
@@ -777,6 +839,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @Pure
     public boolean isCharacterDevice() {
         return linkFlag == LF_CHR;
     }
@@ -786,6 +849,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @Pure
     public boolean isBlockDevice() {
         return linkFlag == LF_BLK;
     }
@@ -795,6 +859,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @since 1.2
      */
+    @Pure
     public boolean isFIFO() {
         return linkFlag == LF_FIFO;
     }
@@ -805,6 +870,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @return An array of TarEntry's for this entry's children.
      */
+    @Impure
     public TarArchiveEntry[] getDirectoryEntries() {
         if (file == null || !file.isDirectory()) {
             return new TarArchiveEntry[0];
@@ -827,6 +893,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      *
      * @param outbuf The tar entry header buffer to fill in.
      */
+    @Impure
     public void writeEntryHeader(byte[] outbuf) {
         try {
             writeEntryHeader(outbuf, TarUtils.DEFAULT_ENCODING, false);
@@ -850,6 +917,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * maximum size of standard tar archives
      * @since 1.4
      */
+    @Impure
     public void writeEntryHeader(byte[] outbuf, ZipEncoding encoding,
                                  boolean starMode) throws IOException {
         int offset = 0;
@@ -894,6 +962,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
         TarUtils.formatCheckSumOctalBytes(chk, outbuf, csOffset, CHKSUMLEN);
     }
 
+    @Impure
     private int writeEntryHeaderField(long value, byte[] outbuf, int offset,
                                       int length, boolean starMode) {
         if (!starMode && (value < 0
@@ -913,6 +982,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param header The tar entry header buffer to get information from.
      * @throws IllegalArgumentException if any of the numeric fields have an invalid format
      */
+    @Impure
     public void parseTarHeader(byte[] header) {
         try {
             parseTarHeader(header, TarUtils.DEFAULT_ENCODING);
@@ -935,11 +1005,13 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @throws IllegalArgumentException if any of the numeric fields
      * have an invalid format
      */
+    @Impure
     public void parseTarHeader(byte[] header, ZipEncoding encoding)
         throws IOException {
         parseTarHeader(header, encoding, false);
     }
 
+    @Impure
     private void parseTarHeader(byte[] header, ZipEncoding encoding,
                                 final boolean oldStyle)
         throws IOException {
@@ -1015,6 +1087,7 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * Strips Windows' drive letter as well as any leading slashes,
      * turns path separators into forward slahes.
      */
+    @SideEffectFree
     private static String normalizeFileName(String fileName,
                                             boolean preserveLeadingSlashes) {
         String osname = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -1060,6 +1133,8 @@ public class TarArchiveEntry implements TarConstants, ArchiveEntry {
      * @param header The tar entry header buffer to evaluate the format for.
      * @return format type
      */
+    @SideEffectFree
+    @Impure
     private int evaluateType(byte[] header) {
         if (ArchiveUtils.matchAsciiBuffer(MAGIC_GNU, header, MAGIC_OFFSET, MAGICLEN)) {
             return FORMAT_OLDGNU;

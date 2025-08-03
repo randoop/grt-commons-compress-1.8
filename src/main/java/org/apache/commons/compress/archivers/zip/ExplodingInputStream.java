@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -70,6 +71,7 @@ class ExplodingInputStream extends InputStream {
      * @param numberOfTrees  the number of trees (2 or 3)
      * @param in             the compressed data stream
      */
+    @Impure
     public ExplodingInputStream(int dictionarySize, int numberOfTrees, InputStream in) {
         if (dictionarySize != 4096 && dictionarySize != 8192) {
             throw new IllegalArgumentException("The dictionary size must be 4096 or 8192");
@@ -88,6 +90,7 @@ class ExplodingInputStream extends InputStream {
      * 
      * @throws IOException
      */
+    @Impure
     private void init() throws IOException {
         if (bits == null) {
             if (numberOfTrees == 3) {
@@ -101,6 +104,7 @@ class ExplodingInputStream extends InputStream {
         }
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         if (!buffer.available()) {
@@ -114,6 +118,7 @@ class ExplodingInputStream extends InputStream {
      * Fill the sliding dictionary with more data.
      * @throws IOException
      */
+    @Impure
     private void fillBuffer() throws IOException {
         init();
         

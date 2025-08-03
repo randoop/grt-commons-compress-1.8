@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -88,6 +90,7 @@ public class FileNameUtil {
      *
      * @param defaultExtension the format's default extension like ".gz"
      */
+    @Impure
     public FileNameUtil(Map<String, String> uncompressSuffix,
                         String defaultExtension) {
         this.uncompressSuffix = Collections.unmodifiableMap(uncompressSuffix);
@@ -130,6 +133,7 @@ public class FileNameUtil {
      * @return {@code true} if the filename has a common format suffix,
      *         {@code false} otherwise
      */
+    @SideEffectFree
     public boolean isCompressedFilename(String filename) {
         final String lower = filename.toLowerCase(Locale.ENGLISH);
         final int n = lower.length();
@@ -155,6 +159,7 @@ public class FileNameUtil {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
+    @SideEffectFree
     public String getUncompressedFilename(String filename) {
         final String lower = filename.toLowerCase(Locale.ENGLISH);
         final int n = lower.length();
@@ -179,6 +184,7 @@ public class FileNameUtil {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
+    @SideEffectFree
     public String getCompressedFilename(String filename) {
         final String lower = filename.toLowerCase(Locale.ENGLISH);
         final int n = lower.length();

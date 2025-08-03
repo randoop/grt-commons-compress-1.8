@@ -17,6 +17,7 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Checksum;
@@ -33,6 +34,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
     private final long expectedChecksum;
     private final Checksum checksum;
     
+    @Impure
     public ChecksumVerifyingInputStream(final Checksum checksum, final InputStream in,
                                         final long size, final long expectedChecksum) {
         this.checksum = checksum;
@@ -47,6 +49,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
      * stream is exhausted and the Checksum doesn't match the expected
      * value
      */
+    @Impure
     @Override
     public int read() throws IOException {
         if (bytesRemaining <= 0) {
@@ -69,6 +72,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
      * stream is exhausted and the Checksum doesn't match the expected
      * value
      */
+    @Impure
     @Override
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
@@ -80,6 +84,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
      * stream is exhausted and the Checksum doesn't match the expected
      * value
      */
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int ret = in.read(b, off, len);
@@ -93,6 +98,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
         return ret;
     }
 
+    @Impure
     @Override
     public long skip(long n) throws IOException {
         // Can't really skip, we have to hash everything to verify the checksum
@@ -103,6 +109,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
         }
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();

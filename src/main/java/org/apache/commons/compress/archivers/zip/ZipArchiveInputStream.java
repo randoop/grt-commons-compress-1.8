@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -139,6 +141,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
 
     private int entriesRead = 0;
 
+    @Impure
     public ZipArchiveInputStream(InputStream inputStream) {
         this(inputStream, ZipEncodingHelper.UTF8);
     }
@@ -148,6 +151,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * for the platform's default encoding
      * @since 1.5
      */
+    @Impure
     public ZipArchiveInputStream(InputStream inputStream, String encoding) {
         this(inputStream, encoding, true);
     }
@@ -158,6 +162,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * @param useUnicodeExtraFields whether to use InfoZIP Unicode
      * Extra Fields (if present) to set the file names.
      */
+    @Impure
     public ZipArchiveInputStream(InputStream inputStream, String encoding, boolean useUnicodeExtraFields) {
         this(inputStream, encoding, useUnicodeExtraFields, false);
     }
@@ -171,6 +176,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * will try to read STORED entries that use a data descriptor
      * @since 1.1
      */
+    @Impure
     public ZipArchiveInputStream(InputStream inputStream,
                                  String encoding,
                                  boolean useUnicodeExtraFields,
@@ -184,6 +190,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         buf.limit(0);
     }
 
+    @Impure
     public ZipArchiveEntry getNextZipEntry() throws IOException {
         boolean firstEntry = true;
         if (closed || hitCentralDirectory) {
@@ -294,6 +301,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * deals with splitting/spanning markers that may prefix the first
      * LFH.
      */
+    @Impure
     private void readFirstLocalFileHeader(byte[] lfh) throws IOException {
         readFully(lfh);
         ZipLong sig = new ZipLong(lfh);
@@ -316,6 +324,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * information from it if sizes are 0xFFFFFFFF and the entry
      * doesn't use a data descriptor.
      */
+    @Impure
     private void processZip64Extra(ZipLong size, ZipLong cSize) {
         Zip64ExtendedInformationExtraField z64 =
             (Zip64ExtendedInformationExtraField) 
@@ -333,6 +342,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         }
     }
 
+    @Impure
     @Override
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextZipEntry();
@@ -345,6 +355,8 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * compression method that hasn't been implemented yet.</p>
      * @since 1.1
      */
+    @Pure
+    @Impure
     @Override
     public boolean canReadEntryData(ArchiveEntry ae) {
         if (ae instanceof ZipArchiveEntry) {
@@ -356,6 +368,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return false;
     }
 
+    @Impure
     @Override
     public int read(byte[] buffer, int offset, int length) throws IOException {
         if (closed) {
@@ -400,6 +413,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
     /**
      * Implementation of read for STORED entries.
      */
+    @Impure
     private int readStored(byte[] buffer, int offset, int length) throws IOException {
 
         if (current.hasDataDescriptor) {
@@ -439,6 +453,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
     /**
      * Implementation of read for DEFLATED entries.
      */
+    @Impure
     private int readDeflated(byte[] buffer, int offset, int length) throws IOException {
         int read = readFromInflater(buffer, offset, length);
         if (read <= 0) {
@@ -459,6 +474,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * Potentially reads more bytes to fill the inflater's buffer and
      * reads from it.
      */
+    @Impure
     private int readFromInflater(byte[] buffer, int offset, int length) throws IOException {
         int read = 0;
         do {
@@ -481,6 +497,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return read;
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         if (!closed) {
@@ -505,6 +522,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * @throws IOException - if an I/O error occurs.
      * @throws IllegalArgumentException - if value is negative.
      */
+    @Impure
     @Override
     public long skip(long value) throws IOException {
         if (value >= 0) {
@@ -531,6 +549,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * @param length    the number of bytes to check
      * @return true, if this stream is a zip archive stream, false otherwise
      */
+    @Impure
     public static boolean matches(byte[] signature, int length) {
         if (length < ZipArchiveOutputStream.LFH_SIG.length) {
             return false;
@@ -542,6 +561,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             || checksig(signature, ZipLong.SINGLE_SEGMENT_SPLIT_MARKER.getBytes());
     }
 
+    @Pure
     private static boolean checksig(byte[] signature, byte[] expected) {
         for (int i = 0; i < expected.length; i++) {
             if (signature[i] != expected[i]) {
@@ -569,6 +589,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      *
      * @throws IOException if an error occurs
      */
+    @Impure
     private void closeEntry() throws IOException {
         if (closed) {
             throw new IOException("The stream is closed");
@@ -611,6 +632,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * Read all data of the current entry from the underlying stream
      * that hasn't been read, yet.
      */
+    @Impure
     private void drainCurrentEntryData() throws IOException {
         long remaining = current.entry.getCompressedSize() - current.bytesReadFromStream;
         while (remaining > 0) {
@@ -639,6 +661,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * number of bytes consumed must be smaller than (or equal to) the
      * number of bytes read but not smaller by more than 2^32.</p>
      */
+    @Impure
     private long getBytesInflated() {
         long inB = inf.getBytesRead();
         if (current.bytesReadFromStream >= TWO_EXP_32) {
@@ -649,6 +672,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return inB;
     }
 
+    @Impure
     private int fill() throws IOException {
         if (closed) {
             throw new IOException("The stream is closed");
@@ -662,6 +686,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return length;
     }
 
+    @Impure
     private void readFully(byte[] b) throws IOException {
         int count = IOUtils.readFully(in, b);
         count(count);
@@ -670,6 +695,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         }
     }
 
+    @Impure
     private void readDataDescriptor() throws IOException {
         readFully(WORD_BUF);
         ZipLong val = new ZipLong(WORD_BUF);
@@ -710,6 +736,8 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * the entry doesn't require any data descriptor or the method is
      * DEFLATED.
      */
+    @Pure
+    @Impure
     private boolean supportsDataDescriptorFor(ZipArchiveEntry entry) {
         return !entry.getGeneralPurposeBit().usesDataDescriptor()
 
@@ -734,6 +762,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * the entry's data is cached and the stream is positioned at the
      * next local file or central directory header.</p>
      */
+    @Impure
     private void readStoredEntry() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int off = 0;
@@ -777,6 +806,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * <p>If it contains such a signature, reads the data descriptor
      * and positions the stream right after the data descriptor.</p>
      */
+    @Impure
     private boolean bufferContainsSignature(ByteArrayOutputStream bos, int offset, int lastRead, int expectedDDLen)
             throws IOException {
 
@@ -818,6 +848,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * <p>Data descriptor plus incomplete signature (3 bytes in the
      * worst case) can be 20 bytes max.</p>
      */
+    @Impure
     private int cacheBytesRead(ByteArrayOutputStream bos, int offset, int lastRead, int expecteDDLen) {
         final int cacheable = offset + lastRead - expecteDDLen - 3;
         if (cacheable > 0) {
@@ -830,6 +861,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return offset;
     }
 
+    @Impure
     private void pushback(byte[] buf, int offset, int length) throws IOException {
         ((PushbackInputStream) in).unread(buf, offset, length);
         pushedBackBytes(length);
@@ -856,6 +888,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * Reads the stream until it find the "End of central directory
      * record" and consumes it as well.
      */
+    @Impure
     private void skipRemainderOfArchive() throws IOException {
         // skip over central directory. One LFH has been read too much
         // already.  The calculation discounts file names and extra
@@ -872,6 +905,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      * Reads forward until the signature of the &quot;End of central
      * directory&quot; record is found.
      */
+    @Impure
     private void findEocdRecord() throws IOException {
         int currentByte = -1;
         boolean skipReadCall = false;
@@ -912,6 +946,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      *
      * Also updates bytes-read counter.
      */
+    @Impure
     private void realSkip(long value) throws IOException {
         if (value >= 0) {
             long skipped = 0;
@@ -935,6 +970,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      *
      * Also updates bytes-read counter.
      */
+    @Impure
     private int readOneByte() throws IOException {
         int b = in.read();
         if (b != -1) {
@@ -943,6 +979,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         return b;
     }
 
+    @Pure
     private boolean isFirstByteOfEocdSig(int b) {
         return b == ZipArchiveOutputStream.EOCD_SIG[0];
     }
@@ -1015,11 +1052,13 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
          * @param in The wrapped input stream
          * @param size The maximum number of bytes to return
          */
+        @Impure
         public BoundedInputStream(final InputStream in, final long size) {
             this.max = size;
             this.in = in;
         }
 
+        @Impure
         @Override
         public int read() throws IOException {
             if (max >= 0 && pos >= max) {
@@ -1032,11 +1071,13 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             return result;
         }
 
+        @Impure
         @Override
         public int read(final byte[] b) throws IOException {
             return this.read(b, 0, b.length);
         }
 
+        @Impure
         @Override
         public int read(final byte[] b, final int off, final int len) throws IOException {
             if (max >= 0 && pos >= max) {
@@ -1055,6 +1096,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             return bytesRead;
         }
 
+        @Impure
         @Override
         public long skip(final long n) throws IOException {
             final long toSkip = max >= 0 ? Math.min(n, max - pos) : n;
@@ -1063,6 +1105,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             return skippedBytes;
         }
     
+        @Impure
         @Override
         public int available() throws IOException {
             if (max >= 0 && pos >= max) {

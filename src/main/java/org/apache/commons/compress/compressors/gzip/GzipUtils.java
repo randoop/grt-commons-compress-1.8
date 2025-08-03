@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.gzip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.compress.compressors.FileNameUtil;
@@ -51,6 +53,7 @@ public class GzipUtils {
     }
 
     /** Private constructor to prevent instantiation of this utility class. */
+    @SideEffectFree
     private GzipUtils() {
     }
 
@@ -61,6 +64,8 @@ public class GzipUtils {
      * @return {@code true} if the filename has a common gzip suffix,
      *         {@code false} otherwise
      */
+    @SideEffectFree
+    @Impure
     public static boolean isCompressedFilename(String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
@@ -78,6 +83,8 @@ public class GzipUtils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getUncompressedFilename(String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
@@ -93,6 +100,8 @@ public class GzipUtils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getCompressedFilename(String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }

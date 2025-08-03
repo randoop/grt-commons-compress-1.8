@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.tar;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 
 /**
@@ -51,12 +54,15 @@ public class TarArchiveSparseEntry implements TarConstants {
      * @param headerBuf The header bytes from a tar archive entry.
      * @throws IOException on unknown format
      */
+    @SideEffectFree
+    @Impure
     public TarArchiveSparseEntry(byte[] headerBuf) throws IOException {
         int offset = 0;
         offset += SPARSELEN_GNU_SPARSE;
         isExtended = TarUtils.parseBoolean(headerBuf, offset);
     }
 
+    @Pure
     public boolean isExtended() {
         return isExtended;
     }

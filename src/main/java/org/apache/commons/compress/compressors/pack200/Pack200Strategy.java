@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 
 /**
@@ -29,6 +30,7 @@ import java.io.IOException;
 public enum Pack200Strategy {
     /** Cache output in memory */
     IN_MEMORY() {
+        @Impure
         @Override
         StreamBridge newStreamBridge() {
             return new InMemoryCachingStreamBridge();
@@ -36,11 +38,13 @@ public enum Pack200Strategy {
     },
     /** Cache output in a temporary file */
     TEMP_FILE() {
+        @Impure
         @Override
         StreamBridge newStreamBridge() throws IOException {
             return new TempFileCachingStreamBridge();
         }
     };
 
+    @Impure
     abstract StreamBridge newStreamBridge() throws IOException;
 }

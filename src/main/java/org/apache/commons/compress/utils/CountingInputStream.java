@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +32,12 @@ import java.io.InputStream;
 public class CountingInputStream extends FilterInputStream {
     private long bytesRead;
 
+    @Impure
     public CountingInputStream(final InputStream in) {
         super(in);
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         int r = in.read();
@@ -42,10 +46,12 @@ public class CountingInputStream extends FilterInputStream {
         }
         return r;
     }
+    @Impure
     @Override
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int r = in.read(b, off, len);
@@ -60,6 +66,7 @@ public class CountingInputStream extends FilterInputStream {
      * 
      * @param read the number of bytes read
      */
+    @Impure
     protected final void count(long read) {
         if (read != -1) {
             bytesRead += read;
@@ -70,6 +77,7 @@ public class CountingInputStream extends FilterInputStream {
      * Returns the current number of bytes read from this stream.
      * @return the number of read bytes
      */
+    @Pure
     public long getBytesRead() {
         return bytesRead;
     }

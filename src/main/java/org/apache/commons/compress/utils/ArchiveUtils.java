@@ -18,6 +18,9 @@
 
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -28,6 +31,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 public class ArchiveUtils {
 
     /** Private constructor to prevent instantiation of this utility class. */
+    @SideEffectFree
     private ArchiveUtils(){
     }
 
@@ -42,6 +46,7 @@ public class ArchiveUtils {
      * 
      * @return the representation of the entry
      */
+    @Impure
     public static String toString(ArchiveEntry entry){
         StringBuilder sb = new StringBuilder();
         sb.append(entry.isDirectory()? 'd' : '-');// c.f. "ls -l" output
@@ -65,6 +70,8 @@ public class ArchiveUtils {
      * @param length
      * @return {@code true} if buffer is the same as the expected string
      */
+    @SideEffectFree
+    @Impure
     public static boolean matchAsciiBuffer(
             String expected, byte[] buffer, int offset, int length){
         byte[] buffer1;
@@ -83,6 +90,8 @@ public class ArchiveUtils {
      * @param buffer
      * @return {@code true} if buffer is the same as the expected string
      */
+    @SideEffectFree
+    @Impure
     public static boolean matchAsciiBuffer(String expected, byte[] buffer){
         return matchAsciiBuffer(expected, buffer, 0, buffer.length);
     }
@@ -94,6 +103,7 @@ public class ArchiveUtils {
      * @param inputString
      * @return the bytes
      */
+    @SideEffectFree
     public static byte[] toAsciiBytes(String inputString){
         try {
             return inputString.getBytes(CharsetNames.US_ASCII);
@@ -108,6 +118,7 @@ public class ArchiveUtils {
      * @param inputBytes
      * @return the bytes, interpreted as an Ascii string
      */
+    @SideEffectFree
     public static String toAsciiString(final byte[] inputBytes){
         try {
             return new String(inputBytes, CharsetNames.US_ASCII);
@@ -124,6 +135,7 @@ public class ArchiveUtils {
      * @param length length of array
      * @return the bytes, interpreted as an Ascii string
      */
+    @SideEffectFree
     public static String toAsciiString(final byte[] inputBytes, int offset, int length){
         try {
             return new String(inputBytes, offset, length, CharsetNames.US_ASCII);
@@ -144,6 +156,7 @@ public class ArchiveUtils {
      * @param ignoreTrailingNulls
      * @return {@code true} if buffer1 and buffer2 have same contents, having regard to trailing nulls
      */
+    @Pure
     public static boolean isEqual(
             final byte[] buffer1, final int offset1, final int length1,
             final byte[] buffer2, final int offset2, final int length2,
@@ -187,6 +200,8 @@ public class ArchiveUtils {
      * @param length2
      * @return {@code true} if buffer1 and buffer2 have same contents
      */
+    @Pure
+    @Impure
     public static boolean isEqual(
             final byte[] buffer1, final int offset1, final int length1,
             final byte[] buffer2, final int offset2, final int length2){
@@ -200,6 +215,8 @@ public class ArchiveUtils {
      * @param buffer2
      * @return {@code true} if buffer1 and buffer2 have same contents
      */
+    @Pure
+    @Impure
     public static boolean isEqual(final byte[] buffer1, final byte[] buffer2 ){
         return isEqual(buffer1, 0, buffer1.length, buffer2, 0, buffer2.length, false);
     }
@@ -212,6 +229,8 @@ public class ArchiveUtils {
      * @param ignoreTrailingNulls
      * @return {@code true} if buffer1 and buffer2 have same contents
      */
+    @Pure
+    @Impure
     public static boolean isEqual(final byte[] buffer1, final byte[] buffer2, boolean ignoreTrailingNulls){
         return isEqual(buffer1, 0, buffer1.length, buffer2, 0, buffer2.length, ignoreTrailingNulls);
     }
@@ -227,6 +246,8 @@ public class ArchiveUtils {
      * @param length2
      * @return {@code true} if buffer1 and buffer2 have same contents, having regard to trailing nulls
      */
+    @Pure
+    @Impure
     public static boolean isEqualWithNull(
             final byte[] buffer1, final int offset1, final int length1,
             final byte[] buffer2, final int offset2, final int length2){
@@ -242,6 +263,7 @@ public class ArchiveUtils {
      *            The number of characters to check (not the size of the array)
      * @return true if the first N bytes are zero
      */
+    @Pure
     public static boolean isArrayZero(byte[] a, int size) {
         for (int i = 0; i < size; i++) {
             if (a[i] != 0) {

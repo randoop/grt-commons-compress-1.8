@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,6 +64,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @param entry describes the entry
      * @throws IOException
      */
+    @Impure
     public abstract void putArchiveEntry(ArchiveEntry entry) throws IOException;
 
     /**
@@ -69,6 +72,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * be required.
      * @throws IOException
      */
+    @Impure
     public abstract void closeArchiveEntry() throws IOException;
 
     /**
@@ -77,6 +81,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * 
      * @throws IOException if the user forgets to close the entry.
      */
+    @Impure
     public abstract void finish() throws IOException;
 
     /**
@@ -88,6 +93,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * 
      * @throws IOException
      */
+    @Impure
     public abstract ArchiveEntry createArchiveEntry(File inputFile, String entryName) throws IOException;
 
     // Generic implementations of OutputStream methods that may be useful to sub-classes
@@ -103,6 +109,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @param b The byte to be written.
      * @throws IOException on error
      */
+    @Impure
     @Override
     public void write(int b) throws IOException {
         oneByte[0] = (byte) (b & BYTE_MASK);
@@ -115,6 +122,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * 
      * @param written the number of bytes written
      */
+    @Impure
     protected void count(int written) {
         count((long) written);
     }
@@ -126,6 +134,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @param written the number of bytes written
      * @since 1.1
      */
+    @Impure
     protected void count(long written) {
         if (written != -1) {
             bytesWritten = bytesWritten + written;
@@ -138,6 +147,8 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @deprecated this method may yield wrong results for large
      * archives, use #getBytesWritten instead
      */
+    @Pure
+    @Impure
     @Deprecated
     public int getCount() {
         return (int) bytesWritten;
@@ -148,6 +159,8 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @return the number of written bytes
      * @since 1.1
      */
+    @Pure
+    @Impure
     public long getBytesWritten() {
         return bytesWritten;
     }
@@ -163,6 +176,8 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * @return This implementation always returns true.
      * @since 1.1
      */
+    @Pure
+    @Impure
     public boolean canWriteEntryData(ArchiveEntry archiveEntry) {
         return true;
     }

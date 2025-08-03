@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.dump;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Directory entry.
@@ -35,6 +37,7 @@ class Dirent {
      * @param type
      * @param name
      */
+    @SideEffectFree
     Dirent(int ino, int parentIno, int type, String name) {
         this.ino = ino;
         this.parentIno = parentIno;
@@ -46,6 +49,7 @@ class Dirent {
      * Get ino.
      * @return the i-node
      */
+    @Pure
     int getIno() {
         return ino;
     }
@@ -54,6 +58,7 @@ class Dirent {
      * Get ino of parent directory.
      * @return the parent i-node
      */
+    @Pure
     int getParentIno() {
         return parentIno;
     }
@@ -62,6 +67,7 @@ class Dirent {
      * Get entry type.
      * @return the entry type
      */
+    @Pure
     int getType() {
         return type;
     }
@@ -70,6 +76,7 @@ class Dirent {
      * Get name of directory entry.
      * @return the directory name
      */
+    @Pure
     String getName() {
         return name;
     }
@@ -77,6 +84,7 @@ class Dirent {
     /**
      * @see java.lang.Object#toString()
      */
+    @SideEffectFree
     @Override
     public String toString() {
         return String.format("[%d]: %s", Integer.valueOf(ino), name);

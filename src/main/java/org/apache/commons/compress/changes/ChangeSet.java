@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.changes;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -42,6 +43,7 @@ public final class ChangeSet {
      * @param filename
      *            the filename of the file to delete
      */
+    @Impure
     public void delete(final String filename) {
         addDeletion(new Change(filename, Change.TYPE_DELETE));
     }
@@ -52,6 +54,7 @@ public final class ChangeSet {
      * @param dirName
      *            the name of the directory tree to delete
      */
+    @Impure
     public void deleteDir(final String dirName) {
         addDeletion(new Change(dirName, Change.TYPE_DELETE_DIR));
     }
@@ -64,6 +67,7 @@ public final class ChangeSet {
      * @param pInput
      *            the datastream to add
      */
+    @Impure
     public void add(final ArchiveEntry pEntry, final InputStream pInput) {
         this.add(pEntry, pInput, true);
     }
@@ -80,6 +84,7 @@ public final class ChangeSet {
      * @param replace
      *            indicates the this change should replace existing entries
      */
+    @Impure
     public void add(final ArchiveEntry pEntry, final InputStream pInput, final boolean replace) {
         addAddition(new Change(pEntry, pInput, replace));
     }
@@ -90,6 +95,7 @@ public final class ChangeSet {
      * @param pChange
      *            the change which should result in an addition
      */
+    @Impure
     private void addAddition(Change pChange) {
         if (Change.TYPE_ADD != pChange.type() ||
             pChange.getInput() == null) {
@@ -125,6 +131,7 @@ public final class ChangeSet {
      * @param pChange
      *            the change which should result in a deletion
      */
+    @Impure
     private void addDeletion(Change pChange) {
         if ((Change.TYPE_DELETE != pChange.type() &&
             Change.TYPE_DELETE_DIR != pChange.type()) ||
@@ -157,6 +164,7 @@ public final class ChangeSet {
      * are not reflected on this ChangeSet and vice versa.
      * @return the changes as a copy
      */
+    @Impure
     Set<Change> getChanges() {
         return new LinkedHashSet<Change>(changes);
     }

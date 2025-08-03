@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.zip.ZipException;
 
 /**
@@ -36,6 +38,7 @@ public interface ZipExtraField {
      *
      * @return The HeaderId value
      */
+    @Pure
     ZipShort getHeaderId();
 
     /**
@@ -43,6 +46,7 @@ public interface ZipExtraField {
      * Header-ID or length specifier.
      * @return the length of the field in the local file data
      */
+    @Impure
     ZipShort getLocalFileDataLength();
 
     /**
@@ -50,6 +54,7 @@ public interface ZipExtraField {
      * Header-ID or length specifier.
      * @return the length of the field in the central directory
      */
+    @Impure
     ZipShort getCentralDirectoryLength();
 
     /**
@@ -57,6 +62,7 @@ public interface ZipExtraField {
      * or length specifier.
      * @return the data
      */
+    @Impure
     byte[] getLocalFileDataData();
 
     /**
@@ -64,6 +70,7 @@ public interface ZipExtraField {
      * length specifier.
      * @return the data
      */
+    @Impure
     byte[] getCentralDirectoryData();
 
     /**
@@ -74,6 +81,7 @@ public interface ZipExtraField {
      * @param length the length of data
      * @exception ZipException on error
      */
+    @Impure
     void parseFromLocalFileData(byte[] buffer, int offset, int length)
         throws ZipException;
 
@@ -85,6 +93,7 @@ public interface ZipExtraField {
      * @param length the length of data
      * @exception ZipException on error
      */
+    @Impure
     void parseFromCentralDirectoryData(byte[] buffer, int offset, int length)
         throws ZipException;
 }

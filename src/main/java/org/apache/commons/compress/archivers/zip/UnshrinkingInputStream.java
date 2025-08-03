@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,6 +34,7 @@ class UnshrinkingInputStream extends InternalLZWInputStream {
     private static final int MAX_TABLE_SIZE = 1 << MAX_CODE_SIZE;
     private final boolean[] isUsed;
     
+    @Impure
     public UnshrinkingInputStream(InputStream inputStream) throws IOException {
         super(inputStream);
         setClearCode(codeSize);
@@ -44,6 +46,7 @@ class UnshrinkingInputStream extends InternalLZWInputStream {
         tableSize = clearCode + 1;
     }
 
+    @Impure
     @Override
     protected int addEntry(int previousCode, byte character) throws IOException {
         while ((tableSize < MAX_TABLE_SIZE) && isUsed[tableSize]) {
@@ -56,6 +59,7 @@ class UnshrinkingInputStream extends InternalLZWInputStream {
         return idx;
     }
     
+    @Impure
     private void partialClear() {
         final boolean[] isParent = new boolean[MAX_TABLE_SIZE];
         for (int i = 0; i < isUsed.length; i++) {
@@ -71,6 +75,7 @@ class UnshrinkingInputStream extends InternalLZWInputStream {
         }
     }
 
+    @Impure
     @Override
     protected int decompressNextSymbol() throws IOException {
         //

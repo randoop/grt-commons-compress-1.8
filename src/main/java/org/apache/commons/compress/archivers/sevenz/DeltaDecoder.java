@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,15 +28,19 @@ import org.tukaani.xz.FinishableWrapperOutputStream;
 import org.tukaani.xz.UnsupportedOptionsException;
 
 class DeltaDecoder extends CoderBase {
+    @SideEffectFree
+    @Impure
     DeltaDecoder() {
         super(Number.class);
     }
 
+    @Impure
     @Override
     InputStream decode(final InputStream in, final Coder coder, byte[] password) throws IOException {
         return new DeltaOptions(getOptionsFromCoder(coder)).getInputStream(in);
     }
 
+    @Impure
     @Override
     OutputStream encode(final OutputStream out, final Object options) throws IOException {
         int distance = numberOptionOrDefault(options, 1);
@@ -44,6 +51,8 @@ class DeltaDecoder extends CoderBase {
         }
     }
 
+    @Pure
+    @Impure
     @Override
     byte[] getOptionsAsProperties(Object options) {
         return new byte[] {
@@ -51,11 +60,14 @@ class DeltaDecoder extends CoderBase {
         };
     }
 
+    @SideEffectFree
+    @Impure
     @Override
     Object getOptionsFromCoder(Coder coder, InputStream in) {
         return Integer.valueOf(getOptionsFromCoder(coder));
     }
 
+    @Pure
     private int getOptionsFromCoder(Coder coder) {
         if (coder.properties == null || coder.properties.length == 0) {
             return 1;

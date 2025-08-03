@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.zip.ZipException;
@@ -62,6 +65,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
     /**
      * Constructor for X7875_NewUnix.
      */
+    @Impure
     public X7875_NewUnix() {
         reset();
     }
@@ -71,6 +75,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return the value for the header id for this extrafield
      */
+    @Pure
     public ZipShort getHeaderId() {
         return HEADER_ID;
     }
@@ -83,6 +88,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return the UID value.
      */
+    @Impure
     public long getUID() { return ZipUtil.bigToLong(uid); }
 
     /**
@@ -93,6 +99,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return the GID value.
      */
+    @Impure
     public long getGID() { return ZipUtil.bigToLong(gid); }
 
     /**
@@ -100,6 +107,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @param l UID value to set on this extra field.
      */
+    @Impure
     public void setUID(long l) {
         this.uid = ZipUtil.longToBig(l);
     }
@@ -109,6 +117,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @param l GID value to set on this extra field.
      */
+    @Impure
     public void setGID(long l) {
         this.gid = ZipUtil.longToBig(l);
     }
@@ -119,6 +128,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return a <code>ZipShort</code> for the length of the data of this extra field
      */
+    @Impure
     public ZipShort getLocalFileDataLength() {
         int uidSize = trimLeadingZeroesForceMinLength(uid.toByteArray()).length;
         int gidSize = trimLeadingZeroesForceMinLength(gid.toByteArray()).length;
@@ -133,6 +143,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return a <code>ZipShort</code> for the length of the data of this extra field
      */
+    @Impure
     public ZipShort getCentralDirectoryLength() {
         return getLocalFileDataLength();  // No different than local version.
     }
@@ -143,6 +154,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return get the data
      */
+    @Impure
     public byte[] getLocalFileDataData() {
         byte[] uidBytes = uid.toByteArray();
         byte[] gidBytes = gid.toByteArray();
@@ -180,6 +192,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      *
      * @return get the data
      */
+    @Impure
     public byte[] getCentralDirectoryData() {
         return getLocalFileDataData();
     }
@@ -192,6 +205,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      * @param length the number of bytes in the array from offset
      * @throws java.util.zip.ZipException on error
      */
+    @Impure
     public void parseFromLocalFileData(
             byte[] data, int offset, int length
     ) throws ZipException {
@@ -213,6 +227,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      * Doesn't do anything special since this class always uses the
      * same data in central directory and local file data.
      */
+    @Impure
     public void parseFromCentralDirectoryData(
             byte[] buffer, int offset, int length
     ) throws ZipException {
@@ -224,6 +239,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      * Reset state back to newly constructed state.  Helps us make sure
      * parse() calls always generate clean results.
      */
+    @Impure
     private void reset() {
         // Typical UID/GID of the first non-root user created on a unix system.
         uid = ONE_THOUSAND;
@@ -237,16 +253,19 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      * @return A String representation of this class useful for
      *         debugging purposes.
      */
+    @Pure
     @Override
     public String toString() {
         return "0x7875 Zip Extra Field: UID=" + uid + " GID=" + gid;
     }
 
+    @SideEffectFree
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
+    @Pure
     @Override
     public boolean equals(Object o) {
         if (o instanceof X7875_NewUnix) {
@@ -257,6 +276,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
         return false;
     }
 
+    @Pure
     @Override
     public int hashCode() {
         int hc = -1234567 * version;
@@ -277,6 +297,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
      * @param array byte[] array to trim & pad.
      * @return trimmed & padded byte[] array.
      */
+    @SideEffectFree
     static byte[] trimLeadingZeroesForceMinLength(byte[] array) {
         if (array == null) {
             return array;

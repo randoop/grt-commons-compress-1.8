@@ -19,6 +19,9 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -51,6 +54,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * <p>When reading from a file the File-arg constructor may
      * provide better performance.</p>
      */
+    @Impure
     public Pack200CompressorInputStream(final InputStream in)
         throws IOException {
         this(in, Pack200Strategy.IN_MEMORY);
@@ -63,6 +67,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * <p>When reading from a file the File-arg constructor may
      * provide better performance.</p>
      */
+    @Impure
     public Pack200CompressorInputStream(final InputStream in,
                                         final Pack200Strategy mode)
         throws IOException {
@@ -76,6 +81,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * <p>When reading from a file the File-arg constructor may
      * provide better performance.</p>
      */
+    @Impure
     public Pack200CompressorInputStream(final InputStream in,
                                         final Map<String, String> props)
         throws IOException {
@@ -89,6 +95,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * <p>When reading from a file the File-arg constructor may
      * provide better performance.</p>
      */
+    @Impure
     public Pack200CompressorInputStream(final InputStream in,
                                         final Pack200Strategy mode,
                                         final Map<String, String> props)
@@ -100,6 +107,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * Decompresses the given file, caching the decompressed data in
      * memory.
      */
+    @Impure
     public Pack200CompressorInputStream(final File f) throws IOException {
         this(f, Pack200Strategy.IN_MEMORY);
     }
@@ -108,6 +116,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * Decompresses the given file using the given strategy to cache
      * the results.
      */
+    @Impure
     public Pack200CompressorInputStream(final File f, final Pack200Strategy mode)
         throws IOException {
         this(null, f, mode, null);
@@ -117,6 +126,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * Decompresses the given file, caching the decompressed data in
      * memory and using the given properties.
      */
+    @Impure
     public Pack200CompressorInputStream(final File f,
                                         final Map<String, String> props)
         throws IOException {
@@ -127,12 +137,14 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * Decompresses the given file using the given strategy to cache
      * the results and the given properties.
      */
+    @Impure
     public Pack200CompressorInputStream(final File f, final Pack200Strategy mode,
                                         final Map<String, String> props)
         throws IOException {
         this(null, f, mode, props);
     }
 
+    @Impure
     private Pack200CompressorInputStream(final InputStream in, final File f,
                                          final Pack200Strategy mode,
                                          final Map<String, String> props)
@@ -146,6 +158,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
         }
         if (f == null) {
             u.unpack(new FilterInputStream(in) {
+                    @SideEffectFree
                     @Override
                         public void close() {
                         // unpack would close this stream but we
@@ -159,26 +172,31 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
         jarOut.close();
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         return streamBridge.getInput().read();
     }
 
+    @Impure
     @Override
     public int read(byte[] b) throws IOException {
         return streamBridge.getInput().read(b);
     }
 
+    @Impure
     @Override
     public int read(byte[] b, int off, int count) throws IOException {
         return streamBridge.getInput().read(b, off, count);
     }
 
+    @Impure
     @Override
     public int available() throws IOException {
         return streamBridge.getInput().available();
     }
 
+    @Impure
     @Override
     public boolean markSupported() {
         try {
@@ -188,6 +206,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     @Override
     public void mark(int limit) {
         try {
@@ -197,16 +216,19 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     @Override
     public void reset() throws IOException {
         streamBridge.getInput().reset();
     }
 
+    @Impure
     @Override
     public long skip(long count) throws IOException {
         return streamBridge.getInput().skip(count);
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         try {
@@ -234,6 +256,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * @return true, if this stream is a pack200 compressed stream,
      * false otherwise
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
         if (length < SIG_LENGTH) {
             return false;

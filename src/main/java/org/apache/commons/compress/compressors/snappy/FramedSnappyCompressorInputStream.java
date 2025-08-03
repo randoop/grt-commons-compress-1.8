@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.compressors.snappy;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -74,18 +77,21 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
      * from the specified input stream.
      * @param in  the InputStream from which to read the compressed data
      */
+    @Impure
     public FramedSnappyCompressorInputStream(InputStream in) throws IOException {
         this.in = new PushbackInputStream(in, 1);
         readStreamIdentifier();
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int read() throws IOException {
         return read(oneByte, 0, 1) == -1 ? -1 : oneByte[0] & 0xFF;
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public void close() throws IOException {
         if (currentCompressedChunk != null) {
@@ -96,6 +102,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int read = readOnce(b, off, len);
@@ -110,6 +117,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int available() throws IOException {
         if (inUncompressedChunk) {
@@ -128,6 +136,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
      * read from the current chunk (which may be -1 if the end of the
      * chunk is reached).
      */
+    @Impure
     private int readOnce(byte[] b, int off, int len) throws IOException {
         int read = -1;
         if (inUncompressedChunk) {
@@ -156,6 +165,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         return read;
     }
 
+    @Impure
     private void readNextBlock() throws IOException {
         verifyLastChecksumAndReset();
         inUncompressedChunk = false;
@@ -193,6 +203,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     private long readCrc() throws IOException {
         byte[] b = new byte[4];
         int read = IOUtils.readFully(in, b);
@@ -207,6 +218,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         return crc;
     }
 
+    @Pure
     static long unmask(long x) {
         // ugly, maybe we should just have used ints and deal with the
         // overflow
@@ -215,6 +227,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         return ((x >> 17) | (x << 15)) & 0xffffFFFFL;
     }
 
+    @Impure
     private int readSize() throws IOException {
         int b = 0;
         int sz = 0;
@@ -228,6 +241,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         return sz;
     }
 
+    @Impure
     private void skipBlock() throws IOException {
         int size = readSize();
         long read = IOUtils.skip(in, size);
@@ -237,6 +251,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     private void readStreamIdentifier() throws IOException {
         byte[] b = new byte[10];
         int read = IOUtils.readFully(in, b);
@@ -246,6 +261,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     private int readOneByte() throws IOException {
         int b = in.read();
         if (b != -1) {
@@ -255,6 +271,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         return -1;
     }
 
+    @Impure
     private void verifyLastChecksumAndReset() throws IOException {
         if (expectedChecksum >= 0 && expectedChecksum != checksum.getValue()) {
             throw new IOException("Checksum verification failed");
@@ -272,6 +289,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
      * @param length    the number of bytes to check
      * @return          true if this is a .sz stream, false otherwise
      */
+    @SideEffectFree
     public static boolean matches(byte[] signature, int length) {
 
         if (length < SZ_SIGNATURE.length) {

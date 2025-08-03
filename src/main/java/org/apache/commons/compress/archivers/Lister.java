@@ -18,6 +18,7 @@
 
 package org.apache.commons.compress.archivers;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +35,7 @@ import java.io.InputStream;
 public final class Lister {
     private static final ArchiveStreamFactory factory = new ArchiveStreamFactory();
 
+    @Impure
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             usage();
@@ -60,6 +62,7 @@ public final class Lister {
         fis.close();
     }
 
+    @Impure
     private static void usage() {
         System.out.println("Parameters: archive-name [archive-type]");
     }

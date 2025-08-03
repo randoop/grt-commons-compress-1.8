@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.changes;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -46,6 +48,7 @@ class Change {
      * from the stream as argument.
      * @param pFilename the filename of the file to delete
      */
+    @SideEffectFree
     Change(final String pFilename, int type) {
         if(pFilename == null) {
             throw new NullPointerException();
@@ -63,6 +66,7 @@ class Change {
      * @param pEntry the entry details
      * @param pInput the InputStream for the entry data
      */
+    @SideEffectFree
     Change(final ArchiveEntry pEntry, final InputStream pInput, boolean replace) {
         if(pEntry == null || pInput == null) {
             throw new NullPointerException();
@@ -74,22 +78,27 @@ class Change {
         this.replaceMode = replace;
     }
 
+    @Pure
     ArchiveEntry getEntry() {
         return entry;
     }
 
+    @Pure
     InputStream getInput() {
         return input;
     }
 
+    @Pure
     String targetFile() {
         return targetFile;
     }
 
+    @Pure
     int type() {
         return type;
     }
 
+    @Pure
     boolean isReplaceMode() {
         return replaceMode;
     }

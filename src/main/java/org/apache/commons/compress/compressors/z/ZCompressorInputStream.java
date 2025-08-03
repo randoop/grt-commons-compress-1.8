@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors.z;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.compress.compressors.z._internal_.InternalLZWInputStream;
@@ -36,6 +37,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
     private final int maxCodeSize;
     private long totalCodesRead = 0;
     
+    @Impure
     public ZCompressorInputStream(InputStream inputStream) throws IOException {
         super(inputStream);
         int firstByte = in.read();
@@ -53,6 +55,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
         clearEntries();
     }
     
+    @Impure
     private void clearEntries() {
         tableSize = 1 << 8;
         if (blockMode) {
@@ -66,6 +69,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
      * and is not part of Commons Compress' published API.  It may
      * change or disappear without warning.</strong></p>
      */
+    @Impure
     @Override
     protected int readNextCode() throws IOException {
         int code = super.readNextCode();
@@ -75,6 +79,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
         return code;
     }
     
+    @Impure
     private void reAlignReading() throws IOException {
         // "compress" works in multiples of 8 symbols, each codeBits bits long.
         // When codeBits changes, the remaining unused symbols in the current
@@ -97,6 +102,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
      * and is not part of Commons Compress' published API.  It may
      * change or disappear without warning.</strong></p>
      */
+    @Impure
     @Override
     protected int addEntry(int previousCode, byte character) throws IOException {
         final int maxTableSize = 1 << codeSize;
@@ -114,6 +120,7 @@ public class ZCompressorInputStream extends InternalLZWInputStream {
      * and is not part of Commons Compress' published API.  It may
      * change or disappear without warning.</strong></p>
      */
+    @Impure
     @Override
     protected int decompressNextSymbol() throws IOException {
         //

@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.cpio;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +103,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * @param in
      *            The cpio stream
      */
+    @Impure
     public CpioArchiveInputStream(final InputStream in) {
         this(in, BLOCK_SIZE, CharsetNames.US_ASCII);
     }
@@ -116,6 +119,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *            the platform's default.
      * @since 1.6
      */
+    @Impure
     public CpioArchiveInputStream(final InputStream in, String encoding) {
         this(in, BLOCK_SIZE, encoding);
     }
@@ -131,6 +135,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *            The block size of the archive.
      * @since 1.5
      */
+    @Impure
     public CpioArchiveInputStream(final InputStream in, int blockSize) {
         this(in, blockSize, CharsetNames.US_ASCII);
     }
@@ -147,6 +152,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *            the platform's default.
      * @since 1.6
      */
+    @Impure
     public CpioArchiveInputStream(final InputStream in, int blockSize, String encoding) {
         this.in = in;
         this.blockSize = blockSize;
@@ -165,6 +171,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     @Override
     public int available() throws IOException {
         ensureOpen();
@@ -180,6 +187,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * @throws IOException
      *             if an I/O error has occurred
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (!this.closed) {
@@ -196,6 +204,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     private void closeEntry() throws IOException {
         // the skip implementation of this class will not skip more
         // than Integer.MAX_VALUE bytes
@@ -210,6 +219,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * @throws IOException
      *             if the stream is already closed
      */
+    @Impure
     private void ensureOpen() throws IOException {
         if (this.closed) {
             throw new IOException("Stream closed");
@@ -225,6 +235,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     public CpioArchiveEntry getNextCPIOEntry() throws IOException {
         ensureOpen();
         if (this.entry != null) {
@@ -265,6 +276,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return this.entry;
     }
 
+    @Impure
     private void skip(int bytes) throws IOException{
         // bytes cannot be more than 3 bytes
         if (bytes > 0) {
@@ -288,6 +300,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     @Override
     public int read(final byte[] b, final int off, final int len)
             throws IOException {
@@ -328,6 +341,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return tmpread;
     }
 
+    @Impure
     private final int readFully(final byte[] b, final int off, final int len)
             throws IOException {
         int count = IOUtils.readFully(in, b, off, len);
@@ -338,6 +352,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return count;
     }
 
+    @Impure
     private long readBinaryLong(final int length, final boolean swapHalfWord)
             throws IOException {
         byte tmp[] = new byte[length];
@@ -345,6 +360,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return CpioUtil.byteArray2long(tmp, swapHalfWord);
     }
 
+    @Impure
     private long readAsciiLong(final int length, final int radix)
             throws IOException {
         byte tmpBuffer[] = new byte[length];
@@ -352,6 +368,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return Long.parseLong(ArchiveUtils.toAsciiString(tmpBuffer), radix);
     }
 
+    @Impure
     private CpioArchiveEntry readNewEntry(final boolean hasCrc)
             throws IOException {
         CpioArchiveEntry ret;
@@ -387,6 +404,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return ret;
     }
 
+    @Impure
     private CpioArchiveEntry readOldAsciiEntry() throws IOException {
         CpioArchiveEntry ret = new CpioArchiveEntry(FORMAT_OLD_ASCII);
 
@@ -412,6 +430,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return ret;
     }
 
+    @Impure
     private CpioArchiveEntry readOldBinaryEntry(final boolean swapHalfWord)
             throws IOException {
         CpioArchiveEntry ret = new CpioArchiveEntry(FORMAT_OLD_BINARY);
@@ -439,6 +458,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return ret;
     }
 
+    @Impure
     private String readCString(final int length) throws IOException {
         // don't include trailing NUL in file name to decode
         byte tmpBuffer[] = new byte[length - 1];
@@ -458,6 +478,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * @throws IllegalArgumentException
      *             if n &lt; 0
      */
+    @Impure
     @Override
     public long skip(final long n) throws IOException {
         if (n < 0) {
@@ -482,6 +503,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
         return total;
     }
 
+    @Impure
     @Override
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextCPIOEntry();
@@ -490,6 +512,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     /**
      * Skips the padding zeros written after the TRAILER!!! entry.
      */
+    @Impure
     private void skipRemainderOfLastBlock() throws IOException {
         long readFromLastBlock = getBytesRead() % blockSize;
         long remainingBytes = readFromLastBlock == 0 ? 0
@@ -516,6 +539,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * 
      * 070707 - MAGIC_OLD_BINARY (held as a short) = 0x71C7 or 0xC771
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
         if (length < 6) {
             return false;

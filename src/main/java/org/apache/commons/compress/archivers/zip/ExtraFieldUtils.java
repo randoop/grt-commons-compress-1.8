@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +58,7 @@ public class ExtraFieldUtils {
      * the {@link ZipExtraField ZipExtraField interface}.</p>
      * @param c the class to register
      */
+    @Impure
     public static void register(Class<?> c) {
         try {
             ZipExtraField ze = (ZipExtraField) c.newInstance();
@@ -76,6 +80,7 @@ public class ExtraFieldUtils {
      * @exception InstantiationException if unable to instantiate the class
      * @exception IllegalAccessException if not allowed to instantiate the class
      */
+    @Impure
     public static ZipExtraField createExtraField(ZipShort headerId)
         throws InstantiationException, IllegalAccessException {
         Class<?> c = implementations.get(headerId);
@@ -95,6 +100,7 @@ public class ExtraFieldUtils {
      * @return an array of ExtraFields
      * @throws ZipException on error
      */
+    @Impure
     public static ZipExtraField[] parse(byte[] data) throws ZipException {
         return parse(data, true, UnparseableExtraField.THROW);
     }
@@ -108,6 +114,7 @@ public class ExtraFieldUtils {
      * @return an array of ExtraFields
      * @throws ZipException on error
      */
+    @Impure
     public static ZipExtraField[] parse(byte[] data, boolean local)
         throws ZipException {
         return parse(data, local, UnparseableExtraField.THROW);
@@ -126,6 +133,7 @@ public class ExtraFieldUtils {
      *
      * @since 1.1
      */
+    @Impure
     public static ZipExtraField[] parse(byte[] data, boolean local,
                                         UnparseableExtraField onUnparseableData)
         throws ZipException {
@@ -192,6 +200,7 @@ public class ExtraFieldUtils {
      * @param data an array of ExtraFiles
      * @return an array of bytes
      */
+    @Impure
     public static byte[] mergeLocalFileDataData(ZipExtraField[] data) {
         final boolean lastIsUnparseableHolder = data.length > 0
             && data[data.length - 1] instanceof UnparseableExtraFieldData;
@@ -226,6 +235,7 @@ public class ExtraFieldUtils {
      * @param data an array of ExtraFields
      * @return an array of bytes
      */
+    @Impure
     public static byte[] mergeCentralDirectoryData(ZipExtraField[] data) {
         final boolean lastIsUnparseableHolder = data.length > 0
             && data[data.length - 1] instanceof UnparseableExtraFieldData;
@@ -296,6 +306,7 @@ public class ExtraFieldUtils {
 
         private final int key;
 
+        @SideEffectFree
         private UnparseableExtraField(int k) {
             key = k;
         }
@@ -303,6 +314,7 @@ public class ExtraFieldUtils {
         /**
          * Key of the action to take.
          */
+        @Pure
         public int getKey() { return key; }
     }
 }

@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.util.Date;
 
@@ -43,6 +45,7 @@ public class DumpArchiveSummary {
     private int firstrec;
     private int ntrec;
 
+    @Impure
     DumpArchiveSummary(byte[] buffer, ZipEncoding encoding) throws IOException {
         dumpDate = 1000L * DumpArchiveUtil.convert32(buffer, 4);
         previousDumpDate = 1000L * DumpArchiveUtil.convert32(buffer, 8);
@@ -63,6 +66,7 @@ public class DumpArchiveSummary {
      * Get the date of this dump.
      * @return the date of this dump.
      */
+    @Impure
     public Date getDumpDate() {
         return new Date(dumpDate);
     }
@@ -70,6 +74,7 @@ public class DumpArchiveSummary {
     /**
      * Set dump date.
      */
+    @Impure
     public void setDumpDate(Date dumpDate) {
         this.dumpDate = dumpDate.getTime();
     }
@@ -78,6 +83,7 @@ public class DumpArchiveSummary {
      * Get the date of the previous dump at this level higher.
      * @return dumpdate may be null
      */
+    @Impure
     public Date getPreviousDumpDate() {
         return new Date(previousDumpDate);
     }
@@ -85,6 +91,7 @@ public class DumpArchiveSummary {
     /**
      * Set previous dump date.
      */
+    @Impure
     public void setPreviousDumpDate(Date previousDumpDate) {
         this.previousDumpDate = previousDumpDate.getTime();
     }
@@ -93,6 +100,7 @@ public class DumpArchiveSummary {
      * Get volume (tape) number.
      * @return volume (tape) number.
      */
+    @Pure
     public int getVolume() {
         return volume;
     }
@@ -100,6 +108,7 @@ public class DumpArchiveSummary {
     /**
      * Set volume (tape) number.
      */
+    @Impure
     public void setVolume(int volume) {
         this.volume = volume;
     }
@@ -112,6 +121,7 @@ public class DumpArchiveSummary {
      * incremental backups.
      * @return dump level
      */
+    @Pure
     public int getLevel() {
         return level;
     }
@@ -119,6 +129,7 @@ public class DumpArchiveSummary {
     /**
      * Set level.
      */
+    @Impure
     public void setLevel(int level) {
         this.level = level;
     }
@@ -128,6 +139,7 @@ public class DumpArchiveSummary {
      * bu the user.
      * @return dump label
      */
+    @Pure
     public String getLabel() {
         return label;
     }
@@ -136,6 +148,7 @@ public class DumpArchiveSummary {
      * Set dump label.
      * @param label
      */
+    @Impure
     public void setLabel(String label) {
         this.label = label;
     }
@@ -144,6 +157,7 @@ public class DumpArchiveSummary {
      * Get the last mountpoint, e.g., /home.
      * @return last mountpoint
      */
+    @Pure
     public String getFilesystem() {
         return filesys;
     }
@@ -151,6 +165,7 @@ public class DumpArchiveSummary {
     /**
      * Set the last mountpoint.
      */
+    @Impure
     public void setFilesystem(String filesystem) {
         this.filesys = filesystem;
     }
@@ -159,6 +174,7 @@ public class DumpArchiveSummary {
      * Get the device name, e.g., /dev/sda3 or /dev/mapper/vg0-home.
      * @return device name
      */
+    @Pure
     public String getDevname() {
         return devname;
     }
@@ -167,6 +183,7 @@ public class DumpArchiveSummary {
      * Set the device name.
      * @param devname
      */
+    @Impure
     public void setDevname(String devname) {
         this.devname = devname;
     }
@@ -175,6 +192,7 @@ public class DumpArchiveSummary {
      * Get the hostname of the system where the dump was performed.
      * @return hostname
      */
+    @Pure
     public String getHostname() {
         return hostname;
     }
@@ -182,6 +200,7 @@ public class DumpArchiveSummary {
     /**
      * Set the hostname.
      */
+    @Impure
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -190,6 +209,7 @@ public class DumpArchiveSummary {
      * Get the miscellaneous flags. See below.
      * @return flags
      */
+    @Pure
     public int getFlags() {
         return flags;
     }
@@ -198,6 +218,7 @@ public class DumpArchiveSummary {
      * Set the miscellaneous flags.
      * @param flags
      */
+    @Impure
     public void setFlags(int flags) {
         this.flags = flags;
     }
@@ -206,6 +227,7 @@ public class DumpArchiveSummary {
      * Get the inode of the first record on this volume.
      * @return inode of the first record on this volume.
      */
+    @Pure
     public int getFirstRecord() {
         return firstrec;
     }
@@ -214,6 +236,7 @@ public class DumpArchiveSummary {
      * Set the inode of the first record.
      * @param firstrec
      */
+    @Impure
     public void setFirstRecord(int firstrec) {
         this.firstrec = firstrec;
     }
@@ -223,6 +246,7 @@ public class DumpArchiveSummary {
      * between 10 and 32.
      * @return the number of records per tape block
      */
+    @Pure
     public int getNTRec() {
         return ntrec;
     }
@@ -230,6 +254,7 @@ public class DumpArchiveSummary {
     /**
      * Set the number of records per tape block.
      */
+    @Impure
     public void setNTRec(int ntrec) {
         this.ntrec = ntrec;
     }
@@ -240,6 +265,7 @@ public class DumpArchiveSummary {
      *
      * @return true if using new header format
      */
+    @Pure
     public boolean isNewHeader() {
         return (flags & 0x0001) == 0x0001;
     }
@@ -249,6 +275,7 @@ public class DumpArchiveSummary {
      * old format.)
      * @return true if using new inode format
      */
+    @Pure
     public boolean isNewInode() {
         return (flags & 0x0002) == 0x0002;
     }
@@ -258,6 +285,7 @@ public class DumpArchiveSummary {
      * The first block is never compressed.
      * @return true if volume is compressed
      */
+    @Pure
     public boolean isCompressed() {
         return (flags & 0x0080) == 0x0080;
     }
@@ -266,6 +294,7 @@ public class DumpArchiveSummary {
      * Does this volume only contain metadata?
      * @return true if volume only contains meta-data
      */
+    @Pure
     public boolean isMetaDataOnly() {
         return (flags & 0x0100) == 0x0100;
     }
@@ -274,6 +303,7 @@ public class DumpArchiveSummary {
      * Does this volume cotain extended attributes.
      * @return true if volume cotains extended attributes.
      */
+    @Pure
     public boolean isExtendedAttributes() {
         return (flags & 0x8000) == 0x8000;
     }
@@ -281,6 +311,7 @@ public class DumpArchiveSummary {
     /**
      * @see java.lang.Object#hashCode()
      */
+    @Pure
     @Override
     public int hashCode() {
         int hash = 17;
@@ -305,6 +336,8 @@ public class DumpArchiveSummary {
     /**
      * @see java.lang.Object#equals(Object)
      */
+    @Pure
+    @Impure
     @Override
     public boolean equals(Object o) {
         if (this == o) {

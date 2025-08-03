@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.bzip2;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.compress.compressors.FileNameUtil;
@@ -45,6 +47,7 @@ public abstract class BZip2Utils {
     }
 
     /** Private constructor to prevent instantiation of this utility class. */
+    @SideEffectFree
     private BZip2Utils() {
     }
 
@@ -55,6 +58,8 @@ public abstract class BZip2Utils {
      * @return {@code true} if the filename has a common bzip2 suffix,
      *         {@code false} otherwise
      */
+    @SideEffectFree
+    @Impure
     public static boolean isCompressedFilename(String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
@@ -72,6 +77,8 @@ public abstract class BZip2Utils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getUncompressedFilename(String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
@@ -86,6 +93,8 @@ public abstract class BZip2Utils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getCompressedFilename(String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }

@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -52,6 +54,7 @@ public abstract class ArchiveInputStream extends InputStream {
      *         or {@code null} if there are no more entries
      * @throws IOException if the next entry could not be read
      */
+    @Impure
     public abstract ArchiveEntry getNextEntry() throws IOException;
 
     /*
@@ -76,6 +79,7 @@ public abstract class ArchiveInputStream extends InputStream {
      * @throws IOException
      *             if an I/O error has occurred
      */
+    @Impure
     @Override
     public int read() throws IOException {
         int num = read(SINGLE, 0, 1);
@@ -88,6 +92,7 @@ public abstract class ArchiveInputStream extends InputStream {
      * 
      * @param read the number of bytes read
      */
+    @Impure
     protected void count(int read) {
         count((long) read);
     }
@@ -99,6 +104,7 @@ public abstract class ArchiveInputStream extends InputStream {
      * @param read the number of bytes read
      * @since 1.1
      */
+    @Impure
     protected void count(long read) {
         if (read != -1) {
             bytesRead = bytesRead + read;
@@ -111,6 +117,7 @@ public abstract class ArchiveInputStream extends InputStream {
      * @param pushedBack the number of bytes pushed back.
      * @since 1.1
      */
+    @Impure
     protected void pushedBackBytes(long pushedBack) {
         bytesRead -= pushedBack;
     }
@@ -121,6 +128,8 @@ public abstract class ArchiveInputStream extends InputStream {
      * @deprecated this method may yield wrong results for large
      * archives, use #getBytesRead instead
      */
+    @Pure
+    @Impure
     @Deprecated
     public int getCount() {
         return (int) bytesRead;
@@ -131,6 +140,8 @@ public abstract class ArchiveInputStream extends InputStream {
      * @return the number of read bytes
      * @since 1.1
      */
+    @Pure
+    @Impure
     public long getBytesRead() {
         return bytesRead;
     }
@@ -148,6 +159,8 @@ public abstract class ArchiveInputStream extends InputStream {
      * 
      * @since 1.1
      */
+    @Pure
+    @Impure
     public boolean canReadEntryData(ArchiveEntry archiveEntry) {
         return true;
     }

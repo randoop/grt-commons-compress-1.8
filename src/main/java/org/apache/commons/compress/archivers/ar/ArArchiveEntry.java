@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.ar;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.File;
 import java.util.Date;
 
@@ -81,6 +84,7 @@ public class ArArchiveEntry implements ArchiveEntry {
      * @param name name of the entry
      * @param length length of the entry in bytes
      */
+    @Impure
     public ArArchiveEntry(String name, long length) {
         this(name, length, 0, 0, DEFAULT_MODE,
              System.currentTimeMillis() / 1000);
@@ -96,6 +100,7 @@ public class ArArchiveEntry implements ArchiveEntry {
      * @param mode file mode
      * @param lastModified last modified time in seconds since the epoch
      */
+    @SideEffectFree
     public ArArchiveEntry(String name, long length, int userId, int groupId,
                           int mode, long lastModified) {
         this.name = name;
@@ -109,28 +114,36 @@ public class ArArchiveEntry implements ArchiveEntry {
     /**
      * Create a new instance using the attributes of the given file
      */
+    @SideEffectFree
+    @Impure
     public ArArchiveEntry(File inputFile, String entryName) {
         // TODO sort out mode
         this(entryName, inputFile.isFile() ? inputFile.length() : 0,
              0, 0, DEFAULT_MODE, inputFile.lastModified() / 1000);
     }
 
+    @Pure
+    @Impure
     public long getSize() {
         return this.getLength();
     }
 
+    @Pure
     public String getName() {
         return name;
     }
 
+    @Pure
     public int getUserId() {
         return userId;
     }
 
+    @Pure
     public int getGroupId() {
         return groupId;
     }
 
+    @Pure
     public int getMode() {
         return mode;
     }
@@ -138,22 +151,27 @@ public class ArArchiveEntry implements ArchiveEntry {
     /**
      * Last modified time in seconds since the epoch.
      */
+    @Pure
     public long getLastModified() {
         return lastModified;
     }
 
+    @Impure
     public Date getLastModifiedDate() {
         return new Date(1000 * getLastModified());
     }
 
+    @Pure
     public long getLength() {
         return length;
     }
 
+    @Pure
     public boolean isDirectory() {
         return false;
     }
 
+    @Pure
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -162,6 +180,7 @@ public class ArArchiveEntry implements ArchiveEntry {
         return result;
     }
 
+    @Pure
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

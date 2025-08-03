@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -29,12 +31,14 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 class AES256SHA256Decoder extends CoderBase {
+    @Impure
     @Override
     InputStream decode(final InputStream in, final Coder coder, final byte[] passwordBytes) throws IOException {
         return new InputStream() {
             private boolean isInitialized = false;
             private CipherInputStream cipherInputStream = null;
                 
+            @Impure
             private CipherInputStream init() throws IOException {
                 if (isInitialized) {
                     return cipherInputStream;
@@ -107,16 +111,19 @@ class AES256SHA256Decoder extends CoderBase {
                     }
             }
                 
+            @Impure
             @Override
             public int read() throws IOException {
                 return init().read();
             }
                 
+            @Impure
             @Override
             public int read(byte[] b, int off, int len) throws IOException {
                 return init().read(b, off, len);
             }
                 
+            @SideEffectFree
             @Override
             public void close() {
             }

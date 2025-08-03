@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.zip.CRC32;
 import java.util.zip.ZipException;
 
@@ -82,6 +85,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
     private CRC32 crc = new CRC32();
 
     /** Constructor for AsiExtraField. */
+    @SideEffectFree
     public AsiExtraField() {
     }
 
@@ -89,6 +93,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * The Header-ID.
      * @return the value for the header id for this extrafield
      */
+    @Pure
     public ZipShort getHeaderId() {
         return HEADER_ID;
     }
@@ -98,6 +103,8 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Header-ID or length specifier.
      * @return a <code>ZipShort</code> for the length of the data of this extra field
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getLocalFileDataLength() {
         return new ZipShort(WORD         // CRC
                           + 2         // Mode
@@ -112,6 +119,8 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Delegate to local file data.
      * @return the centralDirectory length
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getCentralDirectoryLength() {
         return getLocalFileDataLength();
     }
@@ -121,6 +130,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * or length specifier.
      * @return get the data
      */
+    @Impure
     public byte[] getLocalFileDataData() {
         // CRC will be added later
         byte[] data = new byte[getLocalFileDataLength().getValue() - WORD];
@@ -153,6 +163,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Delegate to local file data.
      * @return the local file data
      */
+    @Impure
     public byte[] getCentralDirectoryData() {
         return getLocalFileDataData();
     }
@@ -161,6 +172,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Set the user id.
      * @param uid the user id
      */
+    @Impure
     public void setUserId(int uid) {
         this.uid = uid;
     }
@@ -169,6 +181,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Get the user id.
      * @return the user id
      */
+    @Pure
     public int getUserId() {
         return uid;
     }
@@ -177,6 +190,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Set the group id.
      * @param gid the group id
      */
+    @Impure
     public void setGroupId(int gid) {
         this.gid = gid;
     }
@@ -185,6 +199,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Get the group id.
      * @return the group id
      */
+    @Pure
     public int getGroupId() {
         return gid;
     }
@@ -195,6 +210,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * @param name Name of the file this entry links to, empty String
      *             if it is not a symbolic link.
      */
+    @Impure
     public void setLinkedFile(String name) {
         link = name;
         mode = getMode(mode);
@@ -206,6 +222,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * @return name of the file this entry links to if it is a
      *         symbolic link, the empty string otherwise.
      */
+    @Pure
     public String getLinkedFile() {
         return link;
     }
@@ -214,6 +231,8 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Is this entry a symbolic link?
      * @return true if this is a symbolic link
      */
+    @Pure
+    @Impure
     public boolean isLink() {
         return getLinkedFile().length() != 0;
     }
@@ -222,6 +241,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * File mode of this file.
      * @param mode the file mode
      */
+    @Impure
     public void setMode(int mode) {
         this.mode = getMode(mode);
     }
@@ -230,6 +250,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * File mode of this file.
      * @return the file mode
      */
+    @Pure
     public int getMode() {
         return mode;
     }
@@ -238,6 +259,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Indicate whether this entry is a directory.
      * @param dirFlag if true, this entry is a directory
      */
+    @Impure
     public void setDirectory(boolean dirFlag) {
         this.dirFlag = dirFlag;
         mode = getMode(mode);
@@ -247,6 +269,8 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Is this entry a directory?
      * @return true if this entry is a directory
      */
+    @Pure
+    @Impure
     public boolean isDirectory() {
         return dirFlag && !isLink();
     }
@@ -258,6 +282,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * @param length the number of bytes in the array from offset
      * @throws ZipException on error
      */
+    @Impure
     public void parseFromLocalFileData(byte[] data, int offset, int length)
         throws ZipException {
 
@@ -295,6 +320,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * Doesn't do anything special since this class always uses the
      * same data in central directory and local file data.
      */
+    @Impure
     public void parseFromCentralDirectoryData(byte[] buffer, int offset,
                                               int length)
         throws ZipException {
@@ -306,6 +332,8 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
      * @param mode the mode
      * @return the type with the mode
      */
+    @Pure
+    @Impure
     protected int getMode(int mode) {
         int type = FILE_FLAG;
         if (isLink()) {
@@ -316,6 +344,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
         return type | (mode & PERM_MASK);
     }
 
+    @Impure
     @Override
     public Object clone() {
         try {

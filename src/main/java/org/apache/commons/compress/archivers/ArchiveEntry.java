@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.Date;
 
 /**
@@ -30,6 +32,7 @@ public interface ArchiveEntry {
      * 
      * @return The name of this entry in the archive.
      */
+    @Impure
     public String getName();
 
     /**
@@ -37,6 +40,8 @@ public interface ArchiveEntry {
      * 
      * @return the uncompressed size of this entry.
      */
+    @Pure
+    @Impure
     public long getSize();
 
     /** Special value indicating that the size is unknown */
@@ -47,6 +52,7 @@ public interface ArchiveEntry {
      * 
      * @return true if this entry refers to a directory.
      */
+    @Impure
     public boolean isDirectory();
 
     /**
@@ -55,5 +61,6 @@ public interface ArchiveEntry {
      * @return the last modified date of this entry.
      * @since 1.1
      */
+    @Impure
     public Date getLastModifiedDate();
 }

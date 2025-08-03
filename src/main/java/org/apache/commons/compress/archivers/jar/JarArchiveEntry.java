@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.jar;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.security.cert.Certificate;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -36,18 +39,22 @@ public class JarArchiveEntry extends ZipArchiveEntry {
     private final Attributes manifestAttributes = null;
     private final Certificate[] certificates = null;
 
+    @Impure
     public JarArchiveEntry(ZipEntry entry) throws ZipException {
         super(entry);
     }
 
+    @Impure
     public JarArchiveEntry(String name) {
         super(name);
     }
 
+    @Impure
     public JarArchiveEntry(ZipArchiveEntry entry) throws ZipException {
         super(entry);
     }
 
+    @Impure
     public JarArchiveEntry(JarEntry entry) throws ZipException {
         super(entry);
 
@@ -60,6 +67,7 @@ public class JarArchiveEntry extends ZipArchiveEntry {
      * @deprecated since 1.5, do not use; always returns null
      * @return Always returns null.
      */
+    @Pure
     @Deprecated
     public Attributes getManifestAttributes() {
         return manifestAttributes;
@@ -72,6 +80,7 @@ public class JarArchiveEntry extends ZipArchiveEntry {
      *
      * @deprecated since 1.5, not currently implemented
      */
+    @SideEffectFree
     @Deprecated
     public Certificate[] getCertificates() {
         if (certificates != null) { // never true currently

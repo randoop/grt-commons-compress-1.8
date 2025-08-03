@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.xz;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.compress.compressors.FileNameUtil;
@@ -40,6 +42,7 @@ public class XZUtils {
     }
 
     /** Private constructor to prevent instantiation of this utility class. */
+    @SideEffectFree
     private XZUtils() {
     }
 
@@ -47,6 +50,8 @@ public class XZUtils {
      * Are the classes required to support XZ compression available?
      * @since 1.5
      */
+    @SideEffectFree
+    @Impure
     public static boolean isXZCompressionAvailable() {
         try {
             XZCompressorInputStream.matches(null, 0);
@@ -63,6 +68,8 @@ public class XZUtils {
      * @return {@code true} if the filename has a common xz suffix,
      *         {@code false} otherwise
      */
+    @SideEffectFree
+    @Impure
     public static boolean isCompressedFilename(String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
@@ -80,6 +87,8 @@ public class XZUtils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getUncompressedFilename(String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
@@ -95,6 +104,8 @@ public class XZUtils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
+    @SideEffectFree
+    @Impure
     public static String getCompressedFilename(String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }

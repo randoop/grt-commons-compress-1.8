@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.tar;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import static org.apache.commons.compress.archivers.tar.TarConstants.CHKSUMLEN;
 import static org.apache.commons.compress.archivers.tar.TarConstants.CHKSUM_OFFSET;
 
@@ -45,8 +48,10 @@ public class TarUtils {
      * ZipEncoding.
      */
     static final ZipEncoding FALLBACK_ENCODING = new ZipEncoding() {
+            @Pure
             public boolean canEncode(String name) { return true; }
 
+            @Impure
             public ByteBuffer encode(String name) {
                 final int length = name.length();
                 byte[] buf = new byte[length];
@@ -58,6 +63,7 @@ public class TarUtils {
                 return ByteBuffer.wrap(buf);
             }
 
+            @Impure
             public String decode(byte[] buffer) {
                 final int length = buffer.length;
                 StringBuilder result = new StringBuilder(length);
@@ -99,6 +105,8 @@ public class TarUtils {
      * @return The long value of the octal string.
      * @throws IllegalArgumentException if the trailing space/NUL is missing or if a invalid byte is detected.
      */
+    @SideEffectFree
+    @Impure
     public static long parseOctal(final byte[] buffer, final int offset, final int length) {
         long    result = 0;
         int     end = offset + length;
@@ -166,6 +174,7 @@ public class TarUtils {
      * 64-bit integer.
      * @since 1.4
      */
+    @Impure
     public static long parseOctalOrBinary(final byte[] buffer, final int offset,
                                           final int length) {
 
@@ -179,6 +188,7 @@ public class TarUtils {
         return parseBinaryBigInteger(buffer, offset, length, negative);
     }
 
+    @Pure
     private static long parseBinaryLong(final byte[] buffer, final int offset,
                                         final int length,
                                         final boolean negative) {
@@ -200,6 +210,7 @@ public class TarUtils {
         return negative ? -val : val;
     }
 
+    @Impure
     private static long parseBinaryBigInteger(final byte[] buffer,
                                               final int offset,
                                               final int length,
@@ -230,11 +241,13 @@ public class TarUtils {
      * @return The boolean value of the bytes.
      * @throws IllegalArgumentException if an invalid byte is detected.
      */
+    @Pure
     public static boolean parseBoolean(final byte[] buffer, final int offset) {
         return buffer[offset] == 1;
     }
 
     // Helper method to generate the exception message
+    @SideEffectFree
     private static String exceptionMessage(byte[] buffer, final int offset,
             final int length, int current, final byte currentByte) {
         // default charset is good enough for an exception message,
@@ -261,6 +274,7 @@ public class TarUtils {
      * @param length The maximum number of bytes to parse.
      * @return The entry name.
      */
+    @Impure
     public static String parseName(byte[] buffer, final int offset, final int length) {
         try {
             return parseName(buffer, offset, length, DEFAULT_ENCODING);
@@ -286,6 +300,7 @@ public class TarUtils {
      * @since 1.4
      * @return The entry name.
      */
+    @Impure
     public static String parseName(byte[] buffer, final int offset,
                                    final int length,
                                    final ZipEncoding encoding)
@@ -320,6 +335,7 @@ public class TarUtils {
      * @param length The maximum number of header bytes to copy.
      * @return The updated offset, i.e. offset + length
      */
+    @Impure
     public static int formatNameBytes(String name, byte[] buf, final int offset, final int length) {
         try {
             return formatNameBytes(name, buf, offset, length, DEFAULT_ENCODING);
@@ -351,6 +367,7 @@ public class TarUtils {
      * @since 1.4
      * @return The updated offset, i.e. offset + length
      */
+    @Impure
     public static int formatNameBytes(String name, byte[] buf, final int offset,
                                       final int length,
                                       final ZipEncoding encoding)
@@ -380,6 +397,7 @@ public class TarUtils {
      * @param length length of buffer to fill
      * @throws IllegalArgumentException if the value will not fit in the buffer
      */
+    @Impure
     public static void formatUnsignedOctalString(final long value, byte[] buffer,
             final int offset, final int length) {
         int remaining = length;
@@ -419,6 +437,7 @@ public class TarUtils {
      * @return The updated offset, i.e offset+length
      * @throws IllegalArgumentException if the value (and trailer) will not fit in the buffer
      */
+    @Impure
     public static int formatOctalBytes(final long value, byte[] buf, final int offset, final int length) {
 
         int idx=length-2; // For space and trailing null
@@ -444,6 +463,7 @@ public class TarUtils {
      * @return The updated offset
      * @throws IllegalArgumentException if the value (and trailer) will not fit in the buffer
      */
+    @Impure
     public static int formatLongOctalBytes(final long value, byte[] buf, final int offset, final int length) {
 
         int idx=length-1; // For space
@@ -471,6 +491,7 @@ public class TarUtils {
      * will not fit in the buffer.
      * @since 1.4
      */
+    @Impure
     public static int formatLongOctalOrBinaryBytes(
         final long value, byte[] buf, final int offset, final int length) {
 
@@ -491,6 +512,7 @@ public class TarUtils {
         return offset + length;
     }
 
+    @Impure
     private static void formatLongBinary(final long value, byte[] buf,
                                          final int offset, final int length,
                                          final boolean negative) {
@@ -512,6 +534,7 @@ public class TarUtils {
         }
     }
 
+    @Impure
     private static void formatBigIntegerBinary(final long value, byte[] buf,
                                                final int offset,
                                                final int length,
@@ -541,6 +564,7 @@ public class TarUtils {
      * @return The updated value of offset, i.e. offset+length
      * @throws IllegalArgumentException if the value (and trailer) will not fit in the buffer
      */
+    @Impure
     public static int formatCheckSumOctalBytes(final long value, byte[] buf, final int offset, final int length) {
 
         int idx=length-2; // for NUL and space
@@ -558,6 +582,7 @@ public class TarUtils {
      * @param buf The tar entry's header buffer.
      * @return The computed checksum.
      */
+    @Pure
     public static long computeCheckSum(final byte[] buf) {
         long sum = 0;
 
@@ -603,6 +628,7 @@ public class TarUtils {
      * @see <a href="https://issues.apache.org/jira/browse/COMPRESS-191">COMPRESS-191</a>
      * @since 1.5
      */
+    @Pure
     public static boolean verifyCheckSum(byte[] header) {
         long storedSum = 0;
         long unsignedSum = 0;

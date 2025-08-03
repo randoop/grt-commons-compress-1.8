@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import java.io.OutputStream;
 public final class IOUtils {
 
     /** Private constructor to prevent instantiation of this utility class. */
+    @SideEffectFree
     private IOUtils(){
     }
 
@@ -45,6 +48,7 @@ public final class IOUtils {
      * @throws IOException
      *             if an error occurs
      */
+    @Impure
     public static long copy(final InputStream input, final OutputStream output) throws IOException {
         return copy(input, output, 8024);
     }
@@ -61,6 +65,7 @@ public final class IOUtils {
      * @throws IOException
      *             if an error occurs
      */
+    @Impure
     public static long copy(final InputStream input, final OutputStream output, int buffersize) throws IOException {
         final byte[] buffer = new byte[buffersize];
         int n = 0;
@@ -84,6 +89,7 @@ public final class IOUtils {
      * @return the number of bytes actually skipped
      * @throws IOException
      */
+    @Impure
     public static long skip(InputStream input, long numToSkip) throws IOException {
         long available = numToSkip;
         while (numToSkip > 0) {
@@ -108,6 +114,7 @@ public final class IOUtils {
      * @return the number of bytes actually read
      * @throws IOException
      */
+    @Impure
     public static int readFully(InputStream input, byte[] b) throws IOException {
         return readFully(input, b, 0, b.length);
     }
@@ -128,6 +135,7 @@ public final class IOUtils {
      * @throws IOException
      *             if an I/O error has occurred
      */
+    @Impure
     public static int readFully(InputStream input, byte[] b, int offset, int len)
         throws IOException {
         if (len < 0 || offset < 0 || len + offset > b.length) {
@@ -162,6 +170,7 @@ public final class IOUtils {
      * @throws IOException if an I/O error occurs
      * @since 1.5
      */
+    @Impure
     public static byte[] toByteArray(final InputStream input) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
@@ -173,6 +182,7 @@ public final class IOUtils {
      * @param c Closeable to close, can be null
      * @since 1.7
      */
+    @Impure
     public static void closeQuietly(Closeable c) {
         if (c != null) {
             try {

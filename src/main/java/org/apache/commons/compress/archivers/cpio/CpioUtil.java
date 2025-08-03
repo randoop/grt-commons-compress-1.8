@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.cpio;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Package private utility class for Cpio
@@ -28,6 +30,7 @@ class CpioUtil {
     /**
      * Extracts the file type bits from a mode.
      */
+    @Pure
     static long fileType(long mode) {
         return mode & CpioConstants.S_IFMT;
     }
@@ -43,6 +46,7 @@ class CpioUtil {
      * @return The long value
      * @throws UnsupportedOperationException if number length is not a multiple of 2
      */
+    @Impure
     static long byteArray2long(final byte[] number, final boolean swapHalfWord) {
         if (number.length % 2 != 0) {
             throw new UnsupportedOperationException();
@@ -84,6 +88,7 @@ class CpioUtil {
      * @return The long value
      * @throws UnsupportedOperationException if the length is not a positive multiple of two
      */
+    @Impure
     static byte[] long2byteArray(final long number, final int length,
             final boolean swapHalfWord) {
         byte[] ret = new byte[length];

@@ -17,6 +17,7 @@
  */
 package org.apache.commons.compress.archivers.arj;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.Arrays;
 
 class MainHeader {
@@ -53,6 +54,7 @@ class MainHeader {
     }
 
     
+    @Impure
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

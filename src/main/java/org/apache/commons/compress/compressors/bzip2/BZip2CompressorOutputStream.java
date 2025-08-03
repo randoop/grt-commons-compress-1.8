@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.compressors.bzip2;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -138,6 +141,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     private static final int GREATER_ICOST = 15;
     private static final int LESSER_ICOST = 0;
 
+    @Impure
     private static void hbMakeCodeLengths(final byte[] len, final int[] freq,
                                           final Data dat, final int alphaSize,
                                           final int maxLen) {
@@ -335,6 +339,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      *            The length of the data which will be compressed by
      *            <tt>BZip2CompressorOutputStream</tt>.
      */
+    @Pure
     public static int chooseBlockSize(long inputLength) {
         return (inputLength > 0) ? (int) Math
             .min((inputLength / 132000) + 1, 9) : MAX_BLOCKSIZE;
@@ -351,6 +356,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      * @throws NullPointerException
      *             if <code>out == null</code>.
      */
+    @Impure
     public BZip2CompressorOutputStream(final OutputStream out)
         throws IOException {
         this(out, MAX_BLOCKSIZE);
@@ -374,6 +380,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      * @see #MIN_BLOCKSIZE
      * @see #MAX_BLOCKSIZE
      */
+    @Impure
     public BZip2CompressorOutputStream(final OutputStream out, final int blockSize) throws IOException {
         if (blockSize < 1) {
             throw new IllegalArgumentException("blockSize(" + blockSize + ") < 1");
@@ -390,6 +397,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         init();
     }
 
+    @Impure
     @Override
     public void write(final int b) throws IOException {
         if (this.out != null) {
@@ -412,6 +420,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      * (not 0) - and updating this.last to point to the last index
      * written minus 1.</p>
      */
+    @Impure
     private void writeRun() throws IOException {
         final int lastShadow = this.last;
 
@@ -469,6 +478,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     /**
      * Overriden to close the stream.
      */
+    @Impure
     @Override
     protected void finalize() throws Throwable {
         finish();
@@ -476,6 +486,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     }
 
 
+    @Impure
     public void finish() throws IOException {
         if (out != null) {
             try {
@@ -493,6 +504,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         if (out != null) {
@@ -502,6 +514,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     @Override
     public void flush() throws IOException {
         OutputStream outShadow = this.out;
@@ -516,6 +529,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      * huffmanised, followed by a digit indicating blockSize100k.
      * @throws IOException if the magic bytes could not been written
      */
+    @Impure
     private void init() throws IOException {
         bsPutUByte('B');
         bsPutUByte('Z');
@@ -531,6 +545,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         initBlock();
     }
 
+    @Impure
     private void initBlock() {
         // blockNo++;
         this.crc.initialiseCRC();
@@ -544,6 +559,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     }
 
+    @Impure
     private void endBlock() throws IOException {
         this.blockCRC = this.crc.getFinalCRC();
         this.combinedCRC = (this.combinedCRC << 1) | (this.combinedCRC >>> 31);
@@ -585,6 +601,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         moveToFrontCodeAndSend();
     }
 
+    @Impure
     private void endCompression() throws IOException {
         /*
          * Now another magic 48-bit number, 0x177245385090, to indicate the end
@@ -606,10 +623,12 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     /**
      * Returns the blocksize parameter specified at construction time.
      */
+    @Pure
     public final int getBlockSize() {
         return this.blockSize100k;
     }
 
+    @Impure
     @Override
     public void write(final byte[] buf, int offs, final int len)
         throws IOException {
@@ -637,6 +656,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      * Keeps track of the last bytes written and implicitly performs
      * run-length encoding as the first step of the bzip2 algorithm.
      */
+    @Impure
     private void write0(int b) throws IOException {
         if (this.currentChar != -1) {
             b &= 0xff;
@@ -658,6 +678,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private static void hbAssignCodes(final int[] code, final byte[] length,
                                       final int minLen, final int maxLen,
                                       final int alphaSize) {
@@ -673,6 +694,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private void bsFinishedWithStream() throws IOException {
         while (this.bsLive > 0) {
             int ch = this.bsBuff >> 24;
@@ -682,6 +704,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private void bsW(final int n, final int v) throws IOException {
         final OutputStream outShadow = this.out;
         int bsLiveShadow = this.bsLive;
@@ -697,10 +720,12 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.bsLive = bsLiveShadow + n;
     }
 
+    @Impure
     private void bsPutUByte(final int c) throws IOException {
         bsW(8, c);
     }
 
+    @Impure
     private void bsPutInt(final int u) throws IOException {
         bsW(8, (u >> 24) & 0xff);
         bsW(8, (u >> 16) & 0xff);
@@ -708,6 +733,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         bsW(8, u & 0xff);
     }
 
+    @Impure
     private void sendMTFValues() throws IOException {
         final byte[][] len = this.data.sendMTFValues_len;
         final int alphaSize = this.nInUse + 2;
@@ -751,6 +777,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         sendMTFValues7();
     }
 
+    @Impure
     private void sendMTFValues0(final int nGroups, final int alphaSize) {
         final byte[][] len = this.data.sendMTFValues_len;
         final int[] mtfFreq = this.data.mtfFreq;
@@ -786,6 +813,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private int sendMTFValues1(final int nGroups, final int alphaSize) {
         final Data dataShadow = this.data;
         final int[][] rfreq = dataShadow.sendMTFValues_rfreq;
@@ -904,6 +932,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         return nSelectors;
     }
 
+    @Impure
     private void sendMTFValues2(final int nGroups, final int nSelectors) {
         // assert (nGroups < 8) : nGroups;
 
@@ -931,6 +960,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private void sendMTFValues3(final int nGroups, final int alphaSize) {
         int[][] code = this.data.sendMTFValues_code;
         byte[][] len = this.data.sendMTFValues_len;
@@ -956,6 +986,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         }
     }
 
+    @Impure
     private void sendMTFValues4() throws IOException {
         final boolean[] inUse = this.data.inUse;
         final boolean[] inUse16 = this.data.sentMTFValues4_inUse16;
@@ -1000,6 +1031,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.bsLive = bsLiveShadow;
     }
 
+    @Impure
     private void sendMTFValues5(final int nGroups, final int nSelectors)
         throws IOException {
         bsW(3, nGroups);
@@ -1037,6 +1069,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.bsLive = bsLiveShadow;
     }
 
+    @Impure
     private void sendMTFValues6(final int nGroups, final int alphaSize)
         throws IOException {
         final byte[][] len = this.data.sendMTFValues_len;
@@ -1101,6 +1134,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.bsLive = bsLiveShadow;
     }
 
+    @Impure
     private void sendMTFValues7() throws IOException {
         final Data dataShadow = this.data;
         final byte[][] len = dataShadow.sendMTFValues_len;
@@ -1148,12 +1182,14 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.bsLive = bsLiveShadow;
     }
 
+    @Impure
     private void moveToFrontCodeAndSend() throws IOException {
         bsW(24, this.data.origPtr);
         generateMTFValues();
         sendMTFValues();
     }
 
+    @Impure
     private void blockSort() {
         blockSorter.blockSort(data, last);
     }
@@ -1165,6 +1201,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      *
      * <p>Keeps track of byte frequencies in data.mtfFreq at the same time.</p>
      */
+    @Impure
     private void generateMTFValues() {
         final int lastShadow = this.last;
         final Data dataShadow = this.data;
@@ -1317,6 +1354,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
          */
         int origPtr;
 
+        @SideEffectFree
         Data(int blockSize100k) {
             final int n = blockSize100k * BZip2Constants.BASEBLOCKSIZE;
             this.block = new byte[(n + 1 + NUM_OVERSHOOT_BYTES)];

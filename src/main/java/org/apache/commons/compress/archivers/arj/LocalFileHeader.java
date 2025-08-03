@@ -17,6 +17,7 @@
  */
 package org.apache.commons.compress.archivers.arj;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.Arrays;
 
 class LocalFileHeader {
@@ -70,6 +71,7 @@ class LocalFileHeader {
         static final int NO_DATA = 9;
     }
 
+    @Impure
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

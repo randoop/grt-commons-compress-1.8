@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,11 +37,13 @@ public class BoundedInputStream extends InputStream {
      * @param in the stream to read from
      * @param size the maximum amount of bytes to read
      */
+    @Impure
     public BoundedInputStream(final InputStream in, final long size) {
         this.in = in;
         bytesRemaining = size;
     }
     
+    @Impure
     @Override
     public int read() throws IOException {
         if (bytesRemaining > 0) {
@@ -50,6 +54,7 @@ public class BoundedInputStream extends InputStream {
         }
     }
 
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (bytesRemaining == 0) {
@@ -66,6 +71,7 @@ public class BoundedInputStream extends InputStream {
         return bytesRead;
     }
 
+    @SideEffectFree
     @Override
     public void close() {
         // there isn't anything to close in this stream and the nested

@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.cpio;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -104,6 +105,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * @param format
      *            The format of the stream
      */
+    @Impure
     public CpioArchiveOutputStream(final OutputStream out, final short format) {
         this(out, format, BLOCK_SIZE, CharsetNames.US_ASCII);
     }
@@ -121,6 +123,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * 
      * @since 1.1
      */
+    @Impure
     public CpioArchiveOutputStream(final OutputStream out, final short format,
                                    final int blockSize) {
         this(out, format, blockSize, CharsetNames.US_ASCII);
@@ -142,6 +145,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * 
      * @since 1.6
      */
+    @Impure
     public CpioArchiveOutputStream(final OutputStream out, final short format,
                                    final int blockSize, final String encoding) {
         this.out = out;
@@ -167,6 +171,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * @param out
      *            The cpio stream
      */
+    @Impure
     public CpioArchiveOutputStream(final OutputStream out) {
         this(out, FORMAT_NEW);
     }
@@ -182,6 +187,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      *            the platform's default.
      * @since 1.6
      */
+    @Impure
     public CpioArchiveOutputStream(final OutputStream out, String encoding) {
         this(out, FORMAT_NEW, BLOCK_SIZE, encoding);
     }
@@ -192,6 +198,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * @throws IOException
      *             if the stream is already closed
      */
+    @Impure
     private void ensureOpen() throws IOException {
         if (this.closed) {
             throw new IOException("Stream closed");
@@ -212,6 +219,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      *             occurred
      * @throws ClassCastException if entry is not an instance of CpioArchiveEntry
      */
+    @Impure
     @Override
     public void putArchiveEntry(ArchiveEntry entry) throws IOException {
         if(finished) {
@@ -241,6 +249,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         this.written = 0;
     }
 
+    @Impure
     private void writeHeader(final CpioArchiveEntry e) throws IOException {
         switch (e.getFormat()) {
         case FORMAT_NEW:
@@ -268,6 +277,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
     }
 
+    @Impure
     private void writeNewEntry(final CpioArchiveEntry entry) throws IOException {
         long inode = entry.getInode();
         long devMin = entry.getDeviceMin();
@@ -301,6 +311,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         pad(entry.getHeaderPadCount());
     }
 
+    @Impure
     private void writeOldAsciiEntry(final CpioArchiveEntry entry)
             throws IOException {
         long inode = entry.getInode();
@@ -331,6 +342,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         writeCString(entry.getName());
     }
 
+    @Impure
     private void writeOldBinaryEntry(final CpioArchiveEntry entry,
             final boolean swapHalfWord) throws IOException {
         long inode = entry.getInode();
@@ -368,6 +380,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * org.apache.commons.compress.archivers.ArchiveOutputStream#closeArchiveEntry
      * ()
      */
+    @Impure
     @Override
     public void closeArchiveEntry() throws IOException {
         if(finished) {
@@ -409,6 +422,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     @Override
     public void write(final byte[] b, final int off, final int len)
             throws IOException {
@@ -444,6 +458,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      *             if an I/O exception has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     @Override
     public void finish() throws IOException {
         ensureOpen();
@@ -475,6 +490,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if(!finished) {
@@ -487,6 +503,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
     }
 
+    @Impure
     private void pad(int count) throws IOException{
         if (count > 0){
             byte buff[] = new byte[count];
@@ -495,6 +512,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
     }
 
+    @Impure
     private void writeBinaryLong(final long number, final int length,
             final boolean swapHalfWord) throws IOException {
         byte tmp[] = CpioUtil.long2byteArray(number, length, swapHalfWord);
@@ -502,6 +520,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         count(tmp.length);
     }
 
+    @Impure
     private void writeAsciiLong(final long number, final int length,
             final int radix) throws IOException {
         StringBuilder tmp = new StringBuilder();
@@ -533,6 +552,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * @param str the String to write
      * @throws IOException if the string couldn't be written
      */
+    @Impure
     private void writeCString(final String str) throws IOException {
         ByteBuffer buf = encoding.encode(str);
         final int len = buf.limit() - buf.position();
@@ -546,6 +566,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * 
      * @see org.apache.commons.compress.archivers.ArchiveOutputStream#createArchiveEntry(java.io.File, java.lang.String)
      */
+    @Impure
     @Override
     public ArchiveEntry createArchiveEntry(File inputFile, String entryName)
             throws IOException {

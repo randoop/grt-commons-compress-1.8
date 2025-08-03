@@ -17,6 +17,7 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.InputStream;
 import java.util.zip.CRC32;
 
@@ -28,6 +29,7 @@ import java.util.zip.CRC32;
  */
 public class CRC32VerifyingInputStream extends ChecksumVerifyingInputStream {
     
+    @Impure
     public CRC32VerifyingInputStream(final InputStream in, final long size, final int expectedCrc32) {
         this(in, size, expectedCrc32 & 0xFFFFffffl);
     }
@@ -35,6 +37,7 @@ public class CRC32VerifyingInputStream extends ChecksumVerifyingInputStream {
     /**
      * @since 1.7
      */
+    @Impure
     public CRC32VerifyingInputStream(final InputStream in, final long size, final long expectedCrc32) {
         super(new CRC32(), in, size, expectedCrc32);
     }

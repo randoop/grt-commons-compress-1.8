@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.Serializable;
 
 import static org.apache.commons.compress.archivers.zip.ZipConstants.BYTE_MASK;
@@ -38,6 +41,7 @@ public final class ZipShort implements Cloneable, Serializable {
      * Create instance from a number.
      * @param value the int to store as a ZipShort
      */
+    @SideEffectFree
     public ZipShort (int value) {
         this.value = value;
     }
@@ -46,6 +50,8 @@ public final class ZipShort implements Cloneable, Serializable {
      * Create instance from bytes.
      * @param bytes the bytes to store as a ZipShort
      */
+    @SideEffectFree
+    @Impure
     public ZipShort (byte[] bytes) {
         this(bytes, 0);
     }
@@ -55,6 +61,8 @@ public final class ZipShort implements Cloneable, Serializable {
      * @param bytes the bytes to store as a ZipShort
      * @param offset the offset to start
      */
+    @SideEffectFree
+    @Impure
     public ZipShort (byte[] bytes, int offset) {
         value = ZipShort.getValue(bytes, offset);
     }
@@ -63,6 +71,7 @@ public final class ZipShort implements Cloneable, Serializable {
      * Get value as two bytes in big endian byte order.
      * @return the value as a a two byte array in big endian byte order
      */
+    @Impure
     public byte[] getBytes() {
         byte[] result = new byte[2];
         result[0] = (byte) (value & BYTE_MASK);
@@ -74,6 +83,7 @@ public final class ZipShort implements Cloneable, Serializable {
      * Get value as Java int.
      * @return value as a Java int
      */
+    @Pure
     public int getValue() {
         return value;
     }
@@ -83,6 +93,7 @@ public final class ZipShort implements Cloneable, Serializable {
      * @param value the Java int to convert to bytes
      * @return the converted int as a byte array in big endian byte order
      */
+    @Impure
     public static byte[] getBytes(int value) {
         byte[] result = new byte[2];
         result[0] = (byte) (value & BYTE_MASK);
@@ -96,6 +107,7 @@ public final class ZipShort implements Cloneable, Serializable {
      * @param offset the offset to start
      * @return the corresponding java int value
      */
+    @Pure
     public static int getValue(byte[] bytes, int offset) {
         int value = (bytes[offset + 1] << BYTE_1_SHIFT) & BYTE_1_MASK;
         value += (bytes[offset] & BYTE_MASK);
@@ -107,6 +119,8 @@ public final class ZipShort implements Cloneable, Serializable {
      * @param bytes the array of bytes
      * @return the corresponding java int value
      */
+    @Pure
+    @Impure
     public static int getValue(byte[] bytes) {
         return getValue(bytes, 0);
     }
@@ -116,6 +130,8 @@ public final class ZipShort implements Cloneable, Serializable {
      * @param o an object to compare
      * @return true if the objects are equal
      */
+    @Pure
+    @Impure
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ZipShort)) {
@@ -128,11 +144,13 @@ public final class ZipShort implements Cloneable, Serializable {
      * Override to make two instances with same value equal.
      * @return the value stored in the ZipShort
      */
+    @Pure
     @Override
     public int hashCode() {
         return value;
     }
 
+    @SideEffectFree
     @Override
     public Object clone() {
         try {
@@ -143,6 +161,7 @@ public final class ZipShort implements Cloneable, Serializable {
         }
     }
 
+    @Pure
     @Override
     public String toString() {
         return "ZipShort value: " + value;

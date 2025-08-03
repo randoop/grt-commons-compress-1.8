@@ -23,6 +23,9 @@
 
 package org.apache.commons.compress.archivers.tar;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +82,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * Constructor for TarInputStream.
      * @param is the input stream to use
      */
+    @Impure
     public TarArchiveInputStream(InputStream is) {
         this(is, TarConstants.DEFAULT_BLKSIZE, TarConstants.DEFAULT_RCDSIZE);
     }
@@ -89,6 +93,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param encoding name of the encoding to use for file names
      * @since 1.4
      */
+    @Impure
     public TarArchiveInputStream(InputStream is, String encoding) {
         this(is, TarConstants.DEFAULT_BLKSIZE, TarConstants.DEFAULT_RCDSIZE,
              encoding);
@@ -99,6 +104,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param is the input stream to use
      * @param blockSize the block size to use
      */
+    @Impure
     public TarArchiveInputStream(InputStream is, int blockSize) {
         this(is, blockSize, TarConstants.DEFAULT_RCDSIZE);
     }
@@ -110,6 +116,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param encoding name of the encoding to use for file names
      * @since 1.4
      */
+    @Impure
     public TarArchiveInputStream(InputStream is, int blockSize,
                                  String encoding) {
         this(is, blockSize, TarConstants.DEFAULT_RCDSIZE, encoding);
@@ -121,6 +128,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param blockSize the block size to use
      * @param recordSize the record size to use
      */
+    @Impure
     public TarArchiveInputStream(InputStream is, int blockSize, int recordSize) {
         this(is, blockSize, recordSize, null);      
     }
@@ -133,6 +141,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param encoding name of the encoding to use for file names
      * @since 1.4
      */
+    @Impure
     public TarArchiveInputStream(InputStream is, int blockSize, int recordSize,
                                  String encoding) {
         this.is = is;
@@ -146,6 +155,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * Closes this stream. Calls the TarBuffer's close() method.
      * @throws IOException on error
      */
+    @Impure
     @Override
     public void close() throws IOException {
         is.close();
@@ -156,6 +166,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      *
      * @return The TarBuffer record size.
      */
+    @Pure
     public int getRecordSize() {
         return recordSize;
     }
@@ -172,6 +183,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The number of available bytes for the current entry.
      * @throws IOException for signature
      */
+    @Pure
     @Override
     public int available() throws IOException {
         if (entrySize - entryOffset > Integer.MAX_VALUE) {
@@ -190,6 +202,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return the number actually skipped
      * @throws IOException on error
      */
+    @Impure
     @Override
     public long skip(long numToSkip) throws IOException {
 
@@ -205,6 +218,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
     /**
      * Since we do not support marking just yet, we do nothing.
      */
+    @SideEffectFree
     @Override
     public synchronized void reset() {
     }
@@ -222,6 +236,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The next TarEntry in the archive, or null.
      * @throws IOException on error
      */
+    @Impure
     public TarArchiveEntry getNextTarEntry() throws IOException {
         if (hasHitEOF) {
             return null;
@@ -297,6 +312,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * The last record block should be written at the full size, so skip any
      * additional space used to fill a record after an entry
      */
+    @Impure
     private void skipRecordPadding() throws IOException {
         if (this.entrySize > 0 && this.entrySize % this.recordSize != 0) {
             long numRecords = (this.entrySize / this.recordSize) + 1;
@@ -312,6 +328,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The next entry in the archive as longname data, or null.
      * @throws IOException on error
      */
+    @Impure
     protected byte[] getLongNameData() throws IOException {
         // read in the name
         ByteArrayOutputStream longName = new ByteArrayOutputStream();
@@ -353,6 +370,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The next header in the archive, or null.
      * @throws IOException on error
      */
+    @Impure
     private byte[] getRecord() throws IOException {
         byte[] headerBuf = readRecord();
         hasHitEOF = isEOFRecord(headerBuf);
@@ -371,6 +389,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param record The record data to check.
      * @return true if the record data is an End of Archive
      */
+    @Pure
+    @Impure
     protected boolean isEOFRecord(byte[] record) {
         return record == null || ArchiveUtils.isArrayZero(record, recordSize);
     }
@@ -381,6 +401,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The record data or null if EOF has been hit.
      * @throws IOException on error
      */
+    @Impure
     protected byte[] readRecord() throws IOException {
 
         byte[] record = new byte[recordSize];
@@ -394,12 +415,14 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         return record;
     }
 
+    @Impure
     private void paxHeaders() throws IOException{
         Map<String, String> headers = parsePaxHeaders(this);
         getNextEntry(); // Get the actual file entry
         applyPaxHeadersToCurrentEntry(headers);
     }
 
+    @Impure
     Map<String, String> parsePaxHeaders(InputStream i) throws IOException {
         Map<String, String> headers = new HashMap<String, String>();
         // Format is "length keyword=value\n";
@@ -446,6 +469,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         return headers;
     }
 
+    @Impure
     private void applyPaxHeadersToCurrentEntry(Map<String, String> headers) {
         /*
          * The following headers are defined for Pax.
@@ -493,6 +517,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      *
      * @todo Sparse files get not yet really processed.
      */
+    @Impure
     private void readGNUSparse() throws IOException {
         /* we do not really process sparse files yet
         sparses = new ArrayList();
@@ -521,6 +546,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      *         or {@code null} if there are no more entries
      * @throws IOException if the next entry could not be read
      */
+    @Impure
     @Override
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextTarEntry();
@@ -536,6 +562,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * default - ten records either so we probably have already read
      * beyond the archive anyway.</p>
      */
+    @Impure
     private void tryToConsumeSecondEOFRecord() throws IOException {
         boolean shouldReset = true;
         boolean marked = is.markSupported();
@@ -565,6 +592,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @return The number of bytes read, or -1 at EOF.
      * @throws IOException on error
      */
+    @Impure
     @Override
     public int read(byte[] buf, int offset, int numToRead) throws IOException {
     	int totalRead = 0;
@@ -592,6 +620,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      *
      * <p>May return false if the current entry is a sparse file.</p>
      */
+    @Pure
+    @Impure
     @Override
     public boolean canReadEntryData(ArchiveEntry ae) {
         if (ae instanceof TarArchiveEntry) {
@@ -606,18 +636,22 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * 
      * @return The current Archive Entry
      */
+    @Pure
     public TarArchiveEntry getCurrentEntry() {
         return currEntry;
     }
 
+    @Impure
     protected final void setCurrentEntry(TarArchiveEntry e) {
         currEntry = e;
     }
 
+    @Pure
     protected final boolean isAtEOF() {
         return hasHitEOF;
     }
 
+    @Impure
     protected final void setAtEOF(boolean b) {
         hasHitEOF = b;
     }
@@ -627,6 +661,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * tries to consume the remaining bytes under the assumption that
      * the tool creating this archive has padded the last block.
      */
+    @Impure
     private void consumeRemainderOfLastBlock() throws IOException {
         long bytesReadOfLastBlock = getBytesRead() % blockSize;
         if (bytesReadOfLastBlock > 0) {
@@ -644,6 +679,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      *            the number of bytes to check
      * @return true, if this stream is a tar archive stream, false otherwise
      */
+    @SideEffectFree
+    @Impure
     public static boolean matches(byte[] signature, int length) {
         if (length < TarConstants.VERSION_OFFSET+TarConstants.VERSIONLEN) {
             return false;

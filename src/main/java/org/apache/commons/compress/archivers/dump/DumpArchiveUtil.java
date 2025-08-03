@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.IOException;
 import org.apache.commons.compress.archivers.zip.ZipEncoding;
 
@@ -28,6 +31,7 @@ class DumpArchiveUtil {
     /**
      * Private constructor to prevent instantiation.
      */
+    @SideEffectFree
     private DumpArchiveUtil() {
     }
 
@@ -37,6 +41,8 @@ class DumpArchiveUtil {
      * @param buffer buffer containing tape segment header
      * @returns checksum
      */
+    @Pure
+    @Impure
     public static int calculateChecksum(byte[] buffer) {
         int calc = 0;
 
@@ -53,6 +59,8 @@ class DumpArchiveUtil {
      *
      * @param buffer
      */
+    @Pure
+    @Impure
     public static final boolean verify(byte[] buffer) {
         // verify magic. for now only accept NFS_MAGIC.
         int magic = convert32(buffer, 24);
@@ -76,6 +84,8 @@ class DumpArchiveUtil {
      *
      * @param buffer
      */
+    @Pure
+    @Impure
     public static final int getIno(byte[] buffer) {
         return convert32(buffer, 20);
     }
@@ -87,6 +97,7 @@ class DumpArchiveUtil {
      * @param offset
      * @return the 8-byte entry as a long
      */
+    @Pure
     public static final long convert64(byte[] buffer, int offset) {
         long i = 0;
         i += (((long) buffer[offset + 7]) << 56);
@@ -108,6 +119,7 @@ class DumpArchiveUtil {
      * @param offset
      * @return the 4-byte entry as an int
      */
+    @Pure
     public static final int convert32(byte[] buffer, int offset) {
         int i = 0;
         i = buffer[offset + 3] << 24;
@@ -125,6 +137,7 @@ class DumpArchiveUtil {
      * @param offset
      * @return the 2-byte entry as an int
      */
+    @Pure
     public static final int convert16(byte[] buffer, int offset) {
         int i = 0;
         i += (buffer[offset + 1] << 8) & 0x0000FF00;
@@ -136,6 +149,7 @@ class DumpArchiveUtil {
     /**
      * Decodes a byte array to a string.
      */
+    @Impure
     static String decode(ZipEncoding encoding, byte[] b, int offset, int len)
         throws IOException {
         byte[] copy = new byte[len];

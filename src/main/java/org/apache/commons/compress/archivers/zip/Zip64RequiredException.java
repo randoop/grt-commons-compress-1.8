@@ -18,6 +18,7 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.zip.ZipException;
 
 /**
@@ -33,6 +34,7 @@ public class Zip64RequiredException extends ZipException {
     /**
      * Helper to format "entry too big" messages.
      */
+    @Impure
     static String getEntryTooBigMessage(ZipArchiveEntry ze) {
         return ze.getName() + "'s size exceeds the limit of 4GByte.";
     }
@@ -43,6 +45,7 @@ public class Zip64RequiredException extends ZipException {
     static final String TOO_MANY_ENTRIES_MESSAGE =
         "archive contains more than 65535 entries.";
 
+    @Impure
     public Zip64RequiredException(String reason) {
         super(reason);
     }

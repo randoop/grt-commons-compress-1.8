@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -211,6 +214,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Default constructor.
      */
+    @SideEffectFree
     public DumpArchiveEntry() {
     }
 
@@ -219,6 +223,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * @param name pathname
      * @param simpleName actual filename.
      */
+    @Impure
     public DumpArchiveEntry(String name, String simpleName) {
         setName(name);
         this.simpleName = simpleName;
@@ -232,6 +237,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * @param ino
      * @param type
      */
+    @Impure
     protected DumpArchiveEntry(String name, String simpleName, int ino,
                                TYPE type) {
         setType(type);
@@ -251,6 +257,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * Returns the path of the entry.
      * @return the path of the entry.
      */
+    @Pure
     public String getSimpleName() {
         return simpleName;
     }
@@ -258,6 +265,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Sets the path of the entry.
      */
+    @Impure
     protected void setSimpleName(String simpleName) {
         this.simpleName = simpleName;
     }
@@ -265,6 +273,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Returns the ino of the entry.
      */
+    @Pure
+    @Impure
     public int getIno() {
         return header.getIno();
     }
@@ -272,6 +282,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the number of hard links to the entry.
      */
+    @Pure
     public int getNlink() {
         return nlink;
     }
@@ -279,6 +290,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the number of hard links.
      */
+    @Impure
     public void setNlink(int nlink) {
         this.nlink = nlink;
     }
@@ -286,6 +298,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Get file creation time.
      */
+    @Impure
     public Date getCreationTime() {
         return new Date(ctime);
     }
@@ -293,6 +306,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the file creation time.
      */
+    @Impure
     public void setCreationTime(Date ctime) {
         this.ctime = ctime.getTime();
     }
@@ -300,6 +314,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the generation of the file.
      */
+    @Pure
     public int getGeneration() {
         return generation;
     }
@@ -307,6 +322,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the generation of the file.
      */
+    @Impure
     public void setGeneration(int generation) {
         this.generation = generation;
     }
@@ -314,6 +330,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Has this file been deleted? (On valid on incremental dumps.)
      */
+    @Pure
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -321,6 +338,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set whether this file has been deleted.
      */
+    @Impure
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
@@ -328,6 +346,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the offset within the archive
      */
+    @Pure
     public long getOffset() {
         return offset;
     }
@@ -335,6 +354,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the offset within the archive.
      */
+    @Impure
     public void setOffset(long offset) {
         this.offset = offset;
     }
@@ -342,6 +362,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the tape volume where this file is located.
      */
+    @Pure
     public int getVolume() {
         return volume;
     }
@@ -349,6 +370,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the tape volume.
      */
+    @Impure
     public void setVolume(int volume) {
         this.volume = volume;
     }
@@ -356,6 +378,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the type of the tape segment header.
      */
+    @Pure
+    @Impure
     public DumpArchiveConstants.SEGMENT_TYPE getHeaderType() {
         return header.getType();
     }
@@ -363,6 +387,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the number of records in this segment.
      */
+    @Pure
+    @Impure
     public int getHeaderCount() {
         return header.getCount();
     }
@@ -370,6 +396,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the number of sparse records in this segment.
      */
+    @Pure
+    @Impure
     public int getHeaderHoles() {
         return header.getHoles();
     }
@@ -377,6 +405,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a sparse record?
      */
+    @Pure
+    @Impure
     public boolean isSparseRecord(int idx) {
         return (header.getCdata(idx) & 0x01) == 0;
     }
@@ -384,6 +414,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * @see java.lang.Object#hashCode()
      */
+    @Pure
     @Override
     public int hashCode() {
         return ino;
@@ -392,6 +423,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * @see java.lang.Object#equals(Object o)
      */
+    @Pure
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -421,6 +453,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * @see java.lang.Object#toString()
      */
+    @Pure
+    @Impure
     @Override
     public String toString() {
         return getName();
@@ -433,6 +467,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * @param buffer
      * @throws Exception
      */
+    @Impure
     static DumpArchiveEntry parse(byte[] buffer) {
         DumpArchiveEntry entry = new DumpArchiveEntry();
         TapeSegmentHeader header = entry.header;
@@ -500,6 +535,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Update entry with information from next tape segment header.
      */
+    @Impure
     void update(byte[] buffer) {
         header.volume = DumpArchiveUtil.convert32(buffer, 16);
         header.count = DumpArchiveUtil.convert32(buffer, 160);
@@ -527,30 +563,37 @@ public class DumpArchiveEntry implements ArchiveEntry {
         private int holes;
         private final byte[] cdata = new byte[512]; // map of any 'holes'
 
+        @Pure
         public DumpArchiveConstants.SEGMENT_TYPE getType() {
             return type;
         }
 
+        @Pure
         public int getVolume() {
             return volume;
         }
 
+        @Pure
         public int getIno() {
             return ino;
         }
 
+        @Impure
         void setIno(int ino) {
             this.ino = ino;
         }
 
+        @Pure
         public int getCount() {
             return count;
         }
 
+        @Pure
         public int getHoles() {
             return holes;
         }
 
+        @Pure
         public int getCdata(int idx) {
             return cdata[idx];
         }
@@ -560,6 +603,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * Returns the name of the entry.
      * @return the name of the entry.
      */
+    @Pure
     public String getName() {
         return name;
     }
@@ -568,6 +612,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
      * Returns the unmodified name of the entry.
      * @return the name of the entry.
      */
+    @Pure
     String getOriginalName() {
         return originalName;
     }
@@ -575,6 +620,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Sets the name of the entry.
      */
+    @Impure
     public final void setName(String name) {
         this.originalName = name;
         if (name != null) {
@@ -588,6 +634,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
         this.name = name;
     }
 
+    @Impure
     public Date getLastModifiedDate() {
         return new Date(mtime);
     }
@@ -595,6 +642,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a directory?
      */
+    @Pure
     public boolean isDirectory() {
         return type == TYPE.DIRECTORY;
     }
@@ -602,6 +650,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a regular file?
      */
+    @Pure
     public boolean isFile() {
         return type == TYPE.FILE;
     }
@@ -609,6 +658,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a network device?
      */
+    @Pure
     public boolean isSocket() {
         return type == TYPE.SOCKET;
     }
@@ -616,6 +666,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a character device?
      */
+    @Pure
     public boolean isChrDev() {
         return type == TYPE.CHRDEV;
     }
@@ -623,6 +674,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a block device?
      */
+    @Pure
     public boolean isBlkDev() {
         return type == TYPE.BLKDEV;
     }
@@ -630,6 +682,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Is this a fifo/pipe?
      */
+    @Pure
     public boolean isFifo() {
         return type == TYPE.FIFO;
     }
@@ -637,6 +690,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Get the type of the entry.
      */
+    @Pure
     public TYPE getType() {
         return type;
     }
@@ -644,6 +698,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the type of the entry.
      */
+    @Impure
     public void setType(TYPE type) {
         this.type = type;
     }
@@ -651,6 +706,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the access permissions on the entry.
      */
+    @Pure
     public int getMode() {
         return mode;
     }
@@ -658,6 +714,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the access permissions on the entry.
      */
+    @Impure
     public void setMode(int mode) {
         this.mode = mode & 07777;
         this.permissions = PERMISSION.find(mode);
@@ -666,6 +723,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Returns the permissions on the entry.
      */
+    @Pure
     public Set<PERMISSION> getPermissions() {
         return permissions;
     }
@@ -673,6 +731,8 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Returns the size of the entry.
      */
+    @Pure
+    @Impure
     public long getSize() {
         return isDirectory() ? SIZE_UNKNOWN : size;
     }
@@ -680,6 +740,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Returns the size of the entry as read from the archive.
      */
+    @Pure
     long getEntrySize() {
         return size;
     }
@@ -687,6 +748,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the size of the entry.
      */
+    @Impure
     public void setSize(long size) {
         this.size = size;
     }
@@ -694,6 +756,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the time the file was last modified.
      */
+    @Impure
     public void setLastModifiedDate(Date mtime) {
         this.mtime = mtime.getTime();
     }
@@ -701,6 +764,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Returns the time the file was last accessed.
      */
+    @Impure
     public Date getAccessTime() {
         return new Date(atime);
     }
@@ -708,6 +772,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the time the file was last accessed.
      */
+    @Impure
     public void setAccessTime(Date atime) {
         this.atime = atime.getTime();
     }
@@ -715,6 +780,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the user id.
      */
+    @Pure
     public int getUserId() {
         return uid;
     }
@@ -722,6 +788,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the user id.
      */
+    @Impure
     public void setUserId(int uid) {
         this.uid = uid;
     }
@@ -729,6 +796,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Return the group id
      */
+    @Pure
     public int getGroupId() {
         return gid;
     }
@@ -736,6 +804,7 @@ public class DumpArchiveEntry implements ArchiveEntry {
     /**
      * Set the group id.
      */
+    @Impure
     public void setGroupId(int gid) {
         this.gid = gid;
     }
@@ -753,10 +822,12 @@ public class DumpArchiveEntry implements ArchiveEntry {
 
         private int code;
 
+        @Impure
         private TYPE(int code) {
             this.code = code;
         }
 
+        @Impure
         public static TYPE find(int code) {
             TYPE type = UNKNOWN;
 
@@ -786,10 +857,12 @@ public class DumpArchiveEntry implements ArchiveEntry {
 
         private int code;
 
+        @Impure
         private PERMISSION(int code) {
             this.code = code;
         }
 
+        @Impure
         public static Set<PERMISSION> find(int code) {
             Set<PERMISSION> set = new HashSet<PERMISSION>();
 

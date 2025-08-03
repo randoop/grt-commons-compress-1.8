@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -252,6 +255,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Creates a new ZIP OutputStream filtering the underlying stream.
      * @param out the outputstream to zip
      */
+    @Impure
     public ZipArchiveOutputStream(OutputStream out) {
         this.out = out;
         this.raf = null;
@@ -263,6 +267,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param file the file to zip to
      * @throws IOException on error
      */
+    @Impure
     public ZipArchiveOutputStream(File file) throws IOException {
         OutputStream o = null;
         RandomAccessFile _raf = null;
@@ -287,6 +292,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * invoking {@link #putArchiveEntry(ArchiveEntry)}.
      * @return true if seekable
      */
+    @Pure
     public boolean isSeekable() {
         return raf != null;
     }
@@ -300,6 +306,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param encoding the encoding to use for file names, use null
      * for the platform's default encoding
      */
+    @Impure
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
         this.zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);
@@ -313,6 +320,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @return null if using the platform's default character encoding.
      */
+    @Pure
     public String getEncoding() {
         return encoding;
     }
@@ -323,6 +331,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * <p>Defaults to true.</p>
      */
+    @Impure
     public void setUseLanguageEncodingFlag(boolean b) {
         useUTF8Flag = b && ZipEncodingHelper.isUTF8(encoding);
     }
@@ -332,6 +341,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * <p>Defaults to NEVER.</p>
      */
+    @Impure
     public void setCreateUnicodeExtraFields(UnicodeExtraFieldPolicy b) {
         createUnicodeExtraFields = b;
     }
@@ -342,6 +352,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * <p>Defaults to false.</p>
      */
+    @Impure
     public void setFallbackToUTF8(boolean b) {
         fallbackToUTF8 = b;
     }
@@ -390,6 +401,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @since 1.3
      */
+    @Impure
     public void setUseZip64(Zip64Mode mode) {
         zip64Mode = mode;
     }
@@ -400,6 +412,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * GByte or there are more than 65535 entries inside the archive
      * and {@link #setUseZip64} is {@link Zip64Mode#Never}.
      */
+    @Impure
     @Override
     public void finish() throws IOException {
         if (finished) {
@@ -430,6 +443,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * compressed size exceeds 4 GByte and {@link #setUseZip64} 
      * is {@link Zip64Mode#Never}.
      */
+    @Impure
     @Override
     public void closeArchiveEntry() throws IOException {
         if (finished) {
@@ -465,6 +479,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
     /**
      * Ensures all bytes sent to the deflater are written to the stream.
      */
+    @Impure
     private void flushDeflater() throws IOException {
         if (entry.entry.getMethod() == DEFLATED) {
             def.finish();
@@ -480,6 +495,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Zip64Mode.Never case and returns whether the entry would
      * require a Zip64 extra field.
      */
+    @Impure
     private boolean handleSizesAndCrc(long bytesWritten, long crc,
                                       Zip64Mode effectiveMode)
         throws ZipException {
@@ -530,6 +546,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * and potentiall the ZIP64 extra containing the correct CRC and
      * compressed/uncompressed sizes.
      */
+    @Impure
     private void rewriteSizesAndCrc(boolean actuallyNeedsZip64)
         throws IOException {
         long save = raf.getFilePointer();
@@ -582,6 +599,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * compressed size is known to exceed 4 GByte and {@link #setUseZip64} 
      * is {@link Zip64Mode#Never}.
      */
+    @Impure
     @Override
     public void putArchiveEntry(ArchiveEntry archiveEntry) throws IOException {
         if (finished) {
@@ -628,6 +646,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Provides default values for compression method and last
      * modification time.
      */
+    @Impure
     private void setDefaults(ZipArchiveEntry entry) {
         if (entry.getMethod() == -1) { // not specified
             entry.setMethod(method);
@@ -644,6 +663,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * big to be written without Zip64 extra but the mode has been set
      * to Never.
      */
+    @Impure
     private void validateSizeInformation(Zip64Mode effectiveMode)
         throws ZipException {
         // Size/CRC not required if RandomAccessFile is used
@@ -682,6 +702,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * usage</li>
      * </ul>
      */
+    @Impure
     private boolean shouldAddZip64Extra(ZipArchiveEntry entry, Zip64Mode mode) {
         return mode == Zip64Mode.Always
             || entry.getSize() >= ZIP64_MAGIC
@@ -694,6 +715,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Set the file comment.
      * @param comment the comment
      */
+    @Impure
     public void setComment(String comment) {
         this.comment = comment;
     }
@@ -706,6 +728,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @throws IllegalArgumentException if an invalid compression
      * level is specified.
      */
+    @Impure
     public void setLevel(int level) {
         if (level < Deflater.DEFAULT_COMPRESSION
             || level > Deflater.BEST_COMPRESSION) {
@@ -722,6 +745,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * <p>Default is DEFLATED.</p>
      * @param method an <code>int</code> from java.util.zip.ZipEntry
      */
+    @Impure
     public void setMethod(int method) {
         this.method = method;
     }
@@ -733,6 +757,8 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * compression method that hasn't been implemented yet.</p>
      * @since 1.1
      */
+    @Pure
+    @Impure
     @Override
     public boolean canWriteEntryData(ArchiveEntry ae) {
         if (ae instanceof ZipArchiveEntry) {
@@ -751,6 +777,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param length the number of bytes to write
      * @throws IOException on error
      */
+    @Impure
     @Override
     public void write(byte[] b, int offset, int length) throws IOException {
         ZipUtil.checkRequestedFeatures(entry.entry);
@@ -768,6 +795,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
     /**
      * write implementation for DEFLATED entries.
      */
+    @Impure
     private void writeDeflated(byte[]b, int offset, int length)
         throws IOException {
         if (length > 0 && !def.finished()) {
@@ -800,6 +828,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * GByte or there are more than 65535 entries inside the archive
      * and {@link #setUseZip64} is {@link Zip64Mode#Never}.
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (!finished) {
@@ -814,6 +843,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @exception  IOException  if an I/O error occurs.
      */
+    @Impure
     @Override
     public void flush() throws IOException {
         if (out != null) {
@@ -853,6 +883,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Writes next block of compressed data to the output stream.
      * @throws IOException on error
      */
+    @Impure
     protected final void deflate() throws IOException {
         int len = def.deflate(buf, 0, buf.length);
         if (len > 0) {
@@ -866,6 +897,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param ze the entry to write
      * @throws IOException on error
      */
+    @Impure
     protected void writeLocalFileHeader(ZipArchiveEntry ze) throws IOException {
 
         boolean encodable = zipEncoding.canEncode(ze.getName());
@@ -952,6 +984,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * ALWAYS or the data cannot be encoded using the configured
      * encoding.
      */
+    @Impure
     private void addUnicodeExtraFields(ZipArchiveEntry ze, boolean encodable,
                                        ByteBuffer name)
         throws IOException {
@@ -987,6 +1020,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param ze the entry to write
      * @throws IOException on error
      */
+    @Impure
     protected void writeDataDescriptor(ZipArchiveEntry ze) throws IOException {
         if (ze.getMethod() != DEFLATED || raf != null) {
             return;
@@ -1013,6 +1047,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * GByte and {@link Zip64Mode #setUseZip64} is {@link
      * Zip64Mode#Never}.
      */
+    @Impure
     protected void writeCentralFileHeader(ZipArchiveEntry ze) throws IOException {
         writeOut(CFH_SIG);
         written += WORD;
@@ -1128,6 +1163,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * If the entry needs Zip64 extra information inside the central
      * directory then configure its data.
      */
+    @Impure
     private void handleZip64Extra(ZipArchiveEntry ze, long lfhOffset,
                                   boolean needsZip64Extra) {
         if (needsZip64Extra) {
@@ -1155,6 +1191,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * GByte or there are more than 65535 entries inside the archive
      * and {@link Zip64Mode #setUseZip64} is {@link Zip64Mode#Never}.
      */
+    @Impure
     protected void writeCentralDirectoryEnd() throws IOException {
         writeOut(EOCD_SIG);
 
@@ -1198,6 +1235,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @throws IOException on error
      * @since 1.3
      */
+    @Impure
     protected void writeZip64CentralDirectory() throws IOException {
         if (zip64Mode == Zip64Mode.Never) {
             return;
@@ -1265,6 +1303,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param data the byte array to write
      * @throws IOException on error
      */
+    @Impure
     protected final void writeOut(byte[] data) throws IOException {
         writeOut(data, 0, data.length);
     }
@@ -1276,6 +1315,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * @param length the number of bytes to write
      * @throws IOException on error
      */
+    @Impure
     protected final void writeOut(byte[] data, int offset, int length)
         throws IOException {
         if (raf != null) {
@@ -1285,12 +1325,14 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
         }
     }
 
+    @Impure
     private void deflateUntilInputIsNeeded() throws IOException {
         while (!def.needsInput()) {
             deflate();
         }
     }
 
+    @Impure
     private void writeVersionNeededToExtractAndGeneralPurposeBits(final int
                                                                   zipMethod,
                                                                   final boolean
@@ -1331,6 +1373,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * <p>Must not be used if the stream has already been closed.</p>
      */
+    @Impure
     @Override
     public ArchiveEntry createArchiveEntry(File inputFile, String entryName)
         throws IOException {
@@ -1346,6 +1389,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @since 1.3
      */
+    @Impure
     private Zip64ExtendedInformationExtraField
         getZip64Extra(ZipArchiveEntry ze) {
         if (entry != null) {
@@ -1378,6 +1422,8 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @since 1.3
      */
+    @Pure
+    @Impure
     private boolean hasZip64Extra(ZipArchiveEntry ze) {
         return ze.getExtraField(Zip64ExtendedInformationExtraField
                                 .HEADER_ID)
@@ -1391,6 +1437,8 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      *
      * @since 1.3
      */
+    @Pure
+    @Impure
     private Zip64Mode getEffectiveZip64Mode(ZipArchiveEntry ze) {
         if (zip64Mode != Zip64Mode.AsNeeded
             || raf != null
@@ -1401,12 +1449,14 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
         return Zip64Mode.Never;
     }
 
+    @Impure
     private ZipEncoding getEntryEncoding(ZipArchiveEntry ze) {
         boolean encodable = zipEncoding.canEncode(ze.getName());
         return !encodable && fallbackToUTF8
             ? ZipEncodingHelper.UTF8_ZIP_ENCODING : zipEncoding;
     }
 
+    @Impure
     private ByteBuffer getName(ZipArchiveEntry ze) throws IOException {
         return getEntryEncoding(ze).encode(ze.getName());
     }
@@ -1418,6 +1468,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * <p>This method only exists to support tests that generate
      * corrupt archives so they can clean up any temporary files.</p>
      */
+    @Impure
     void destroy() throws IOException {
         if (raf != null) {
             raf.close();
@@ -1448,9 +1499,11 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
             new UnicodeExtraFieldPolicy("not encodeable");
 
         private final String name;
+        @SideEffectFree
         private UnicodeExtraFieldPolicy(String n) {
             name = n;
         }
+        @Pure
         @Override
         public String toString() {
             return name;
@@ -1462,6 +1515,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * currently being written.
      */
     private static final class CurrentEntry {
+        @SideEffectFree
         private CurrentEntry(ZipArchiveEntry entry) {
             this.entry = entry;
         }

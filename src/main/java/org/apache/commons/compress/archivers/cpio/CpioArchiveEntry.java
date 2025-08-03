@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.cpio;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.File;
 import java.util.Date;
 
@@ -201,6 +204,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * CpioConstants.FORMAT_OLD_ASCII
      * </pre>
      */
+    @SideEffectFree
     public CpioArchiveEntry(final short format) {
         switch (format) {
         case FORMAT_NEW:
@@ -232,6 +236,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param name
      *            The name of this entry.
      */
+    @SideEffectFree
+    @Impure
     public CpioArchiveEntry(final String name) {
         this(FORMAT_NEW, name);
     }
@@ -254,6 +260,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @SideEffectFree
+    @Impure
     public CpioArchiveEntry(final short format, final String name) {
         this(format);
         this.name = name;
@@ -268,6 +276,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param size
      *            The size of this entry
      */
+    @Impure
     public CpioArchiveEntry(final String name, final long size) {
         this(name);
         this.setSize(size);
@@ -293,6 +302,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @Impure
     public CpioArchiveEntry(final short format, final String name,
                             final long size) {
         this(format, name);
@@ -309,6 +319,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param entryName
      *            The name of this entry.
      */
+    @Impure
     public CpioArchiveEntry(File inputFile, String entryName) {
         this(FORMAT_NEW, inputFile, entryName);
     }
@@ -334,6 +345,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @since 1.1
      */
+    @Impure
     public CpioArchiveEntry(final short format, File inputFile,
                             String entryName) {
         this(format, entryName, inputFile.isFile() ? inputFile.length() : 0);
@@ -352,6 +364,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
     /**
      * Check if the method is allowed for the defined format.
      */
+    @SideEffectFree
     private void checkNewFormat() {
         if ((this.fileFormat & FORMAT_NEW_MASK) == 0) {
             throw new UnsupportedOperationException();
@@ -361,6 +374,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
     /**
      * Check if the method is allowed for the defined format.
      */
+    @SideEffectFree
     private void checkOldFormat() {
         if ((this.fileFormat & FORMAT_OLD_MASK) == 0) {
             throw new UnsupportedOperationException();
@@ -374,6 +388,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @return Returns the checksum.
      * @throws UnsupportedOperationException if the format is not a new format
      */
+    @SideEffectFree
+    @Impure
     public long getChksum() {
         checkNewFormat();
         return this.chksum;
@@ -387,6 +403,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with a new
      *             format.
      */
+    @SideEffectFree
+    @Impure
     public long getDevice() {
         checkOldFormat();
         return this.min;
@@ -400,6 +418,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with an old
      *             format.
      */
+    @SideEffectFree
+    @Impure
     public long getDeviceMaj() {
         checkNewFormat();
         return this.maj;
@@ -411,6 +431,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @return Returns the minor device id.
      * @throws UnsupportedOperationException if format is not a new format
      */
+    @SideEffectFree
+    @Impure
     public long getDeviceMin() {
         checkNewFormat();
         return this.min;
@@ -422,6 +444,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @return Returns the filesize.
      * @see org.apache.commons.compress.archivers.ArchiveEntry#getSize()
      */
+    @Pure
     public long getSize() {
         return this.filesize;
     }
@@ -431,6 +454,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the format.
      */
+    @Pure
     public short getFormat() {
         return this.fileFormat;
     }
@@ -440,6 +464,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the group id.
      */
+    @Pure
     public long getGID() {
         return this.gid;
     }
@@ -449,6 +474,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the header size in bytes.
      */
+    @Pure
     public int getHeaderSize() {
         return this.headerSize;
     }
@@ -458,6 +484,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the aligment boundary (0, 2, 4) in bytes
      */
+    @Pure
     public int getAlignmentBoundary() {
         return this.alignmentBoundary;
     }
@@ -467,6 +494,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return the number of bytes needed to pad the header (0,1,2,3)
      */
+    @Pure
     public int getHeaderPadCount(){
         if (this.alignmentBoundary == 0) { return 0; }
         int size = this.headerSize+this.name.length()+1; // Name has terminating null
@@ -482,6 +510,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return the number of bytes needed to pad the data (0,1,2,3)
      */
+    @Pure
     public int getDataPadCount(){
         if (this.alignmentBoundary == 0) { return 0; }
         long size = this.filesize;
@@ -497,6 +526,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the inode.
      */
+    @Pure
     public long getInode() {
         return this.inode;
     }
@@ -506,6 +536,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the mode.
      */
+    @Pure
     public long getMode() {
         return mode == 0 && !CPIO_TRAILER.equals(name) ? C_ISREG : mode;
     }
@@ -515,6 +546,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the name.
      */
+    @Pure
     public String getName() {
         return this.name;
     }
@@ -524,6 +556,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the number of links.
      */
+    @Pure
+    @Impure
     public long getNumberOfLinks() {
         return nlink == 0 ?
             isDirectory() ? 2 : 1
@@ -538,6 +572,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with a new
      *             format.
      */
+    @SideEffectFree
+    @Impure
     public long getRemoteDevice() {
         checkOldFormat();
         return this.rmin;
@@ -551,6 +587,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with an old
      *             format.
      */
+    @SideEffectFree
+    @Impure
     public long getRemoteDeviceMaj() {
         checkNewFormat();
         return this.rmaj;
@@ -564,6 +602,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with an old
      *             format.
      */
+    @SideEffectFree
+    @Impure
     public long getRemoteDeviceMin() {
         checkNewFormat();
         return this.rmin;
@@ -574,10 +614,12 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the time.
      */
+    @Pure
     public long getTime() {
         return this.mtime;
     }
 
+    @Impure
     public Date getLastModifiedDate() {
         return new Date(1000 * getTime());
     }
@@ -587,6 +629,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return Returns the user id.
      */
+    @Pure
     public long getUID() {
         return this.uid;
     }
@@ -596,6 +639,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a block device.
      */
+    @Pure
+    @Impure
     public boolean isBlockDevice() {
         return CpioUtil.fileType(mode) == C_ISBLK;
     }
@@ -605,6 +650,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a character device.
      */
+    @Pure
+    @Impure
     public boolean isCharacterDevice() {
         return CpioUtil.fileType(mode) == C_ISCHR;
     }
@@ -614,6 +661,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a directory.
      */
+    @Pure
+    @Impure
     public boolean isDirectory() {
         return CpioUtil.fileType(mode) == C_ISDIR;
     }
@@ -623,6 +672,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a network device.
      */
+    @Pure
+    @Impure
     public boolean isNetwork() {
         return CpioUtil.fileType(mode) == C_ISNWK;
     }
@@ -632,6 +683,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a pipe.
      */
+    @Pure
+    @Impure
     public boolean isPipe() {
         return CpioUtil.fileType(mode) == C_ISFIFO;
     }
@@ -641,6 +694,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a regular file.
      */
+    @Pure
+    @Impure
     public boolean isRegularFile() {
         return CpioUtil.fileType(mode) == C_ISREG;
     }
@@ -650,6 +705,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a socket.
      */
+    @Pure
+    @Impure
     public boolean isSocket() {
         return CpioUtil.fileType(mode) == C_ISSOCK;
     }
@@ -659,6 +716,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * 
      * @return TRUE if this entry is a symbolic link.
      */
+    @Pure
+    @Impure
     public boolean isSymbolicLink() {
         return CpioUtil.fileType(mode) == C_ISLNK;
     }
@@ -670,6 +729,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param chksum
      *            The checksum to set.
      */
+    @Impure
     public void setChksum(final long chksum) {
         checkNewFormat();
         this.chksum = chksum;
@@ -684,6 +744,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with a new
      *             format.
      */
+    @Impure
     public void setDevice(final long device) {
         checkOldFormat();
         this.min = device;
@@ -695,6 +756,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param maj
      *            The major device id to set.
      */
+    @Impure
     public void setDeviceMaj(final long maj) {
         checkNewFormat();
         this.maj = maj;
@@ -706,6 +768,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param min
      *            The minor device id to set.
      */
+    @Impure
     public void setDeviceMin(final long min) {
         checkNewFormat();
         this.min = min;
@@ -717,6 +780,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param size
      *            The filesize to set.
      */
+    @Impure
     public void setSize(final long size) {
         if (size < 0 || size > 0xFFFFFFFFL) {
             throw new IllegalArgumentException("invalid entry size <" + size
@@ -731,6 +795,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param gid
      *            The group id to set.
      */
+    @Impure
     public void setGID(final long gid) {
         this.gid = gid;
     }
@@ -741,6 +806,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param inode
      *            The inode to set.
      */
+    @Impure
     public void setInode(final long inode) {
         this.inode = inode;
     }
@@ -751,6 +817,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param mode
      *            The mode to set.
      */
+    @Impure
     public void setMode(final long mode) {
         final long maskedMode = mode & S_IFMT;
         switch ((int) maskedMode) {
@@ -779,6 +846,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param name
      *            The name to set.
      */
+    @Impure
     public void setName(final String name) {
         this.name = name;
     }
@@ -789,6 +857,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param nlink
      *            The number of links to set.
      */
+    @Impure
     public void setNumberOfLinks(final long nlink) {
         this.nlink = nlink;
     }
@@ -802,6 +871,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with a new
      *             format.
      */
+    @Impure
     public void setRemoteDevice(final long device) {
         checkOldFormat();
         this.rmin = device;
@@ -816,6 +886,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with an old
      *             format.
      */
+    @Impure
     public void setRemoteDeviceMaj(final long rmaj) {
         checkNewFormat();
         this.rmaj = rmaj;
@@ -830,6 +901,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      *             if this method is called for a CPIOArchiveEntry with an old
      *             format.
      */
+    @Impure
     public void setRemoteDeviceMin(final long rmin) {
         checkNewFormat();
         this.rmin = rmin;
@@ -841,6 +913,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param time
      *            The time to set.
      */
+    @Impure
     public void setTime(final long time) {
         this.mtime = time;
     }
@@ -851,6 +924,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      * @param uid
      *            The user id to set.
      */
+    @Impure
     public void setUID(final long uid) {
         this.uid = uid;
     }
@@ -858,6 +932,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
+    @Pure
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -869,6 +944,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Pure
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

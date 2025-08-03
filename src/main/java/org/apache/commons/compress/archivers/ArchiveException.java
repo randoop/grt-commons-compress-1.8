@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Archiver related Exception 
@@ -33,6 +35,7 @@ public class ArchiveException extends Exception {
      * @param message
      *            the detail message
      */
+    @SideEffectFree
     public ArchiveException(String message) {
         super(message);
     }
@@ -45,6 +48,7 @@ public class ArchiveException extends Exception {
      * @param cause
      *            the cause
      */
+    @Impure
     public ArchiveException(String message, Exception cause) {
         super(message);
         this.initCause(cause);

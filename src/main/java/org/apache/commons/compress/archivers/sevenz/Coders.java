@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -63,10 +66,12 @@ class Coders {
             put(SevenZMethod.DELTA_FILTER, new DeltaDecoder());
         }};
 
+    @Pure
     static CoderBase findByMethod(SevenZMethod method) {
         return CODER_MAP.get(method);
     }
 
+    @Impure
     static InputStream addDecoder(final InputStream is,
             final Coder coder, final byte[] password) throws IOException {
         CoderBase cb = findByMethod(SevenZMethod.byId(coder.decompressionMethodId));
@@ -77,6 +82,7 @@ class Coders {
         return cb.decode(is, coder, password);
     }
     
+    @Impure
     static OutputStream addEncoder(final OutputStream out, final SevenZMethod method,
                                    Object options) throws IOException {
         CoderBase cb = findByMethod(method);
@@ -87,11 +93,13 @@ class Coders {
     }
 
     static class CopyDecoder extends CoderBase {
+        @Pure
         @Override
         InputStream decode(final InputStream in, final Coder coder,
                 byte[] password) throws IOException {
             return in; 
         }
+        @Pure
         @Override
         OutputStream encode(final OutputStream out, final Object _) {
             return out;
@@ -99,6 +107,7 @@ class Coders {
     }
 
     static class LZMADecoder extends CoderBase {
+        @Impure
         @Override
         InputStream decode(final InputStream in, final Coder coder,
                 byte[] password) throws IOException {
@@ -116,10 +125,13 @@ class Coders {
     
     static class BCJDecoder extends CoderBase {
         private final FilterOptions opts;
+        @SideEffectFree
+        @Impure
         BCJDecoder(FilterOptions opts) {
             this.opts = opts;
         }
 
+        @Impure
         @Override
         InputStream decode(final InputStream in, final Coder coder,
                 byte[] password) throws IOException {
@@ -132,10 +144,12 @@ class Coders {
                 throw ex;
             }
         }
+        @Impure
         @Override
         OutputStream encode(final OutputStream out, final Object _) {
             final FinishableOutputStream fo = opts.getOutputStream(new FinishableWrapperOutputStream(out));
             return new FilterOutputStream(fo) {
+                @SideEffectFree
                 @Override
                 public void flush() {
                 }
@@ -144,16 +158,20 @@ class Coders {
     }
     
     static class DeflateDecoder extends CoderBase {
+        @SideEffectFree
+        @Impure
         DeflateDecoder() {
             super(Number.class);
         }
 
+        @Impure
         @Override
         InputStream decode(final InputStream in, final Coder coder, final byte[] password)
             throws IOException {
             return new InflaterInputStream(new DummyByteAddingInputStream(in),
                                            new Inflater(true));
         }
+        @Impure
         @Override
         OutputStream encode(final OutputStream out, final Object options) {
             int level = numberOptionOrDefault(options, 9);
@@ -162,15 +180,19 @@ class Coders {
     }
 
     static class BZIP2Decoder extends CoderBase {
+        @SideEffectFree
+        @Impure
         BZIP2Decoder() {
             super(Number.class);
         }
 
+        @Impure
         @Override
         InputStream decode(final InputStream in, final Coder coder, final byte[] password)
                 throws IOException {
             return new BZip2CompressorInputStream(in);
         }
+        @Impure
         @Override
         OutputStream encode(final OutputStream out, final Object options)
                 throws IOException {
@@ -188,10 +210,12 @@ class Coders {
     private static class DummyByteAddingInputStream extends FilterInputStream {
         private boolean addDummyByte = true;
 
+        @Impure
         private DummyByteAddingInputStream(InputStream in) {
             super(in);
         }
 
+        @Impure
         @Override
         public int read() throws IOException {
             int result = super.read();
@@ -202,6 +226,7 @@ class Coders {
             return result;
         }
 
+        @Impure
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             int result = super.read(b, off, len);

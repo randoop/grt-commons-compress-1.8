@@ -24,6 +24,9 @@
  */
 package org.apache.commons.compress.compressors.bzip2;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -105,6 +108,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * @throws NullPointerException
      *             if <tt>in == null</tt>
      */
+    @Impure
     public BZip2CompressorInputStream(final InputStream in) throws IOException {
         this(in, false);
     }
@@ -125,6 +129,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * @throws NullPointerException
      *             if <tt>in == null</tt>
      */
+    @Impure
     public BZip2CompressorInputStream(final InputStream in, final boolean decompressConcatenated) throws IOException {
         this.in = in;
         this.decompressConcatenated = decompressConcatenated;
@@ -133,6 +138,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         initBlock();
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         if (this.in != null) {
@@ -149,6 +155,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * 
      * @see java.io.InputStream#read(byte[], int, int)
      */
+    @Impure
     @Override
     public int read(final byte[] dest, final int offs, final int len)
         throws IOException {
@@ -178,6 +185,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return c;
     }
 
+    @Impure
     private void makeMaps() {
         final boolean[] inUse = this.data.inUse;
         final byte[] seqToUnseq = this.data.seqToUnseq;
@@ -193,6 +201,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         this.nInUse = nInUseShadow;
     }
 
+    @Impure
     private int read0() throws IOException {
         switch (currentState) {
         case EOF:
@@ -224,6 +233,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private boolean init(boolean isFirstStream) throws IOException {
         if (null == in) {
             throw new IOException("No InputStream");
@@ -255,6 +265,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return true;
     }
 
+    @Impure
     private void initBlock() throws IOException {
         char magic0;
         char magic1;
@@ -315,6 +326,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private void endBlock() throws IOException {
         this.computedBlockCRC = this.crc.getFinalCRC();
 
@@ -334,6 +346,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         this.computedCombinedCRC ^= this.computedBlockCRC;
     }
 
+    @Impure
     private boolean complete() throws IOException {
         this.storedCombinedCRC = bsGetInt();
         this.currentState = EOF;
@@ -348,6 +361,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return !decompressConcatenated || !init(false);
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         InputStream inShadow = this.in;
@@ -363,6 +377,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int bsR(final int n) throws IOException {
         int bsLiveShadow = this.bsLive;
         int bsBuffShadow = this.bsBuff;
@@ -387,6 +402,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return (bsBuffShadow >> (bsLiveShadow - n)) & ((1 << n) - 1);
     }
 
+    @Impure
     private boolean bsGetBit() throws IOException {
         int bsLiveShadow = this.bsLive;
         int bsBuffShadow = this.bsBuff;
@@ -407,10 +423,12 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return ((bsBuffShadow >> (bsLiveShadow - 1)) & 1) != 0;
     }
 
+    @Impure
     private char bsGetUByte() throws IOException {
         return (char) bsR(8);
     }
 
+    @Impure
     private int bsGetInt() throws IOException {
         return (((((bsR(8) << 8) | bsR(8)) << 8) | bsR(8)) << 8) | bsR(8);
     }
@@ -418,6 +436,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     /**
      * Called by createHuffmanDecodingTables() exclusively.
      */
+    @Impure
     private static void hbCreateDecodeTables(final int[] limit,
                                              final int[] base, final int[] perm, final char[] length,
                                              final int minLen, final int maxLen, final int alphaSize) {
@@ -456,6 +475,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private void recvDecodingTables() throws IOException {
         final Data dataShadow = this.data;
         final boolean[] inUse = dataShadow.inUse;
@@ -540,6 +560,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     /**
      * Called by recvDecodingTables() exclusively.
      */
+    @Impure
     private void createHuffmanDecodingTables(final int alphaSize,
                                              final int nGroups) {
         final Data dataShadow = this.data;
@@ -568,6 +589,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private void getAndMoveToFrontDecode() throws IOException {
         this.origPtr = bsR(24);
         recvDecodingTables();
@@ -757,6 +779,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         this.bsBuff = bsBuffShadow;
     }
 
+    @Impure
     private int getAndMoveToFrontDecode0(final int groupNo) throws IOException {
         final InputStream inShadow = this.in;
         final Data dataShadow = this.data;
@@ -790,6 +813,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return dataShadow.perm[zt][zvec - dataShadow.base[zt][zn]];
     }
 
+    @Impure
     private int setupBlock() throws IOException {
         if (currentState == EOF || this.data == null) {
             return -1;
@@ -827,6 +851,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         return setupNoRandPartA();
     }
 
+    @Impure
     private int setupRandPartA() throws IOException {
         if (this.su_i2 <= this.last) {
             this.su_chPrev = this.su_ch2;
@@ -852,6 +877,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int setupNoRandPartA() throws IOException {
         if (this.su_i2 <= this.last) {
             this.su_chPrev = this.su_ch2;
@@ -870,6 +896,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int setupRandPartB() throws IOException {
         if (this.su_ch2 != this.su_chPrev) {
             this.currentState = RAND_PART_A_STATE;
@@ -898,6 +925,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int setupRandPartC() throws IOException {
         if (this.su_j2 < this.su_z) {
             this.crc.updateCRC(this.su_ch2);
@@ -911,6 +939,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int setupNoRandPartB() throws IOException {
         if (this.su_ch2 != this.su_chPrev) {
             this.su_count = 1;
@@ -925,6 +954,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    @Impure
     private int setupNoRandPartC() throws IOException {
         if (this.su_j2 < this.su_z) {
             int su_ch2Shadow = this.su_ch2;
@@ -974,6 +1004,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         // 4560782 byte
         // ===============
 
+        @SideEffectFree
         Data(int blockSize100k) {
             this.ll8 = new byte[blockSize100k * BZip2Constants.BASEBLOCKSIZE];
         }
@@ -985,6 +1016,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
          * I don't initialize it at construction time to avoid unneccessary
          * memory allocation when compressing small files.
          */
+        @Impure
         int[] initTT(int length) {
             int[] ttShadow = this.tt;
 
@@ -1012,6 +1044,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * 
      * @since 1.1
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
 
         if (length < 3) {

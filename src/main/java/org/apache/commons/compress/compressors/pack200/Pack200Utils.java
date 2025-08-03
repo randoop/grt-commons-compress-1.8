@@ -19,6 +19,8 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.util.jar.Pack200;
  * @since 1.3
  */
 public class Pack200Utils {
+    @SideEffectFree
     private Pack200Utils() { }
 
     /**
@@ -54,6 +57,7 @@ public class Pack200Utils {
      *
      * @param jar the JAR archive to normalize
      */
+    @Impure
     public static void normalize(File jar)
         throws IOException {
         normalize(jar, jar, null);
@@ -74,6 +78,7 @@ public class Pack200Utils {
      * @param props properties to set for the pack operation.  This
      * method will implicitly set the segment limit to -1.
      */
+    @Impure
     public static void normalize(File jar, Map<String, String> props)
         throws IOException {
         normalize(jar, jar, props);
@@ -98,6 +103,7 @@ public class Pack200Utils {
      * @param from the JAR archive to normalize
      * @param to the normalized archive
      */
+    @Impure
     public static void normalize(File from, File to)
         throws IOException {
         normalize(from, to, null);
@@ -121,6 +127,7 @@ public class Pack200Utils {
      * @param props properties to set for the pack operation.  This
      * method will implicitly set the segment limit to -1.
      */
+    @Impure
     public static void normalize(File from, File to, Map<String, String> props)
         throws IOException {
         if (props == null) {

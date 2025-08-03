@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +36,12 @@ abstract class StreamBridge extends FilterOutputStream {
     private InputStream input;
     private final Object INPUT_LOCK = new Object();
 
+    @Impure
     protected StreamBridge(OutputStream out) {
         super(out);
     }
 
+    @Impure
     protected StreamBridge() {
         this(null);
     }
@@ -46,6 +49,7 @@ abstract class StreamBridge extends FilterOutputStream {
     /**
      * Provides the input view.
      */
+    @Impure
     InputStream getInput() throws IOException {
         synchronized (INPUT_LOCK) {
             if (input == null) {
@@ -58,11 +62,13 @@ abstract class StreamBridge extends FilterOutputStream {
     /**
      * Creates the input view.
      */
+    @Impure
     abstract InputStream getInputView() throws IOException;
 
     /**
      * Closes input and output and releases all associated resources.
      */
+    @Impure
     void stop() throws IOException {
         close();
         synchronized (INPUT_LOCK) {

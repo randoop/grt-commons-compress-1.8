@@ -16,6 +16,9 @@
  *
  */
 package org.apache.commons.compress.archivers.sevenz;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 
 /**
  * Combines a SevenZMethod with configuration options for the method.
@@ -43,6 +46,8 @@ public class SevenZMethodConfiguration {
      * Doesn't configure any additional options.
      * @param method the method to use
      */
+    @SideEffectFree
+    @Impure
     public SevenZMethodConfiguration(SevenZMethod method) {
         this(method, null);
     }
@@ -53,6 +58,8 @@ public class SevenZMethodConfiguration {
      * @param options the options to use
      * @throws IllegalArgumentException if the method doesn't understand the options specified.
      */
+    @SideEffectFree
+    @Impure
     public SevenZMethodConfiguration(SevenZMethod method, Object options) {
         this.method = method;
         this.options = options;
@@ -65,6 +72,7 @@ public class SevenZMethodConfiguration {
     /**
      * The specified method.
      */
+    @Pure
     public SevenZMethod getMethod() {
         return method;
     }
@@ -72,6 +80,7 @@ public class SevenZMethodConfiguration {
     /**
      * The specified options.
      */
+    @Pure
     public Object getOptions() {
         return options;
     }

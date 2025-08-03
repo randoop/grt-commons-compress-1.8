@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -149,6 +152,7 @@ public class ZipFile implements Closeable {
      *
      * @throws IOException if an error occurs while reading the file.
      */
+    @Impure
     public ZipFile(File f) throws IOException {
         this(f, ZipEncodingHelper.UTF8);
     }
@@ -160,6 +164,7 @@ public class ZipFile implements Closeable {
      *
      * @throws IOException if an error occurs while reading the file.
      */
+    @Impure
     public ZipFile(String name) throws IOException {
         this(new File(name), ZipEncodingHelper.UTF8);
     }
@@ -174,6 +179,7 @@ public class ZipFile implements Closeable {
      *
      * @throws IOException if an error occurs while reading the file.
      */
+    @Impure
     public ZipFile(String name, String encoding) throws IOException {
         this(new File(name), encoding, true);
     }
@@ -188,6 +194,7 @@ public class ZipFile implements Closeable {
      *
      * @throws IOException if an error occurs while reading the file.
      */
+    @Impure
     public ZipFile(File f, String encoding) throws IOException {
         this(f, encoding, true);
     }
@@ -204,6 +211,7 @@ public class ZipFile implements Closeable {
      *
      * @throws IOException if an error occurs while reading the file.
      */
+    @Impure
     public ZipFile(File f, String encoding, boolean useUnicodeExtraFields)
         throws IOException {
         this.archiveName = f.getAbsolutePath();
@@ -230,6 +238,7 @@ public class ZipFile implements Closeable {
      *
      * @return null if using the platform's default character encoding.
      */
+    @Pure
     public String getEncoding() {
         return encoding;
     }
@@ -238,6 +247,7 @@ public class ZipFile implements Closeable {
      * Closes the archive.
      * @throws IOException if an error occurs closing the archive.
      */
+    @Impure
     public void close() throws IOException {
         // this flag is only written here and read in finalize() which
         // can never be run in parallel.
@@ -252,6 +262,7 @@ public class ZipFile implements Closeable {
      * on a null parameter
      * @param zipfile file to close, can be null
      */
+    @Impure
     public static void closeQuietly(ZipFile zipfile) {
         IOUtils.closeQuietly(zipfile);
     }
@@ -264,6 +275,7 @@ public class ZipFile implements Closeable {
      *
      * @return all entries as {@link ZipArchiveEntry} instances
      */
+    @Impure
     public Enumeration<ZipArchiveEntry> getEntries() {
         return Collections.enumeration(entries);
     }
@@ -278,6 +290,7 @@ public class ZipFile implements Closeable {
      *
      * @since 1.1
      */
+    @Impure
     public Enumeration<ZipArchiveEntry> getEntriesInPhysicalOrder() {
         ZipArchiveEntry[] allEntries = entries.toArray(new ZipArchiveEntry[0]);
         Arrays.sort(allEntries, OFFSET_COMPARATOR);
@@ -296,6 +309,7 @@ public class ZipFile implements Closeable {
      * @return the ZipArchiveEntry corresponding to the given name - or
      * {@code null} if not present.
      */
+    @Impure
     public ZipArchiveEntry getEntry(String name) {
         LinkedList<ZipArchiveEntry> entriesOfThatName = nameMap.get(name);
         return entriesOfThatName != null ? entriesOfThatName.getFirst() : null;
@@ -310,6 +324,7 @@ public class ZipFile implements Closeable {
      * given name
      * @since 1.6
      */
+    @SideEffectFree
     public Iterable<ZipArchiveEntry> getEntries(String name) {
         List<ZipArchiveEntry> entriesOfThatName = nameMap.get(name);
         return entriesOfThatName != null ? entriesOfThatName
@@ -325,6 +340,7 @@ public class ZipFile implements Closeable {
      * given name
      * @since 1.6
      */
+    @Impure
     public Iterable<ZipArchiveEntry> getEntriesInPhysicalOrder(String name) {
         ZipArchiveEntry[] entriesOfThatName = new ZipArchiveEntry[0];
         if (nameMap.containsKey(name)) {
@@ -341,6 +357,8 @@ public class ZipFile implements Closeable {
      * compression method that hasn't been implemented yet.</p>
      * @since 1.1
      */
+    @Pure
+    @Impure
     public boolean canReadEntryData(ZipArchiveEntry ze) {
         return ZipUtil.canHandleEntryData(ze);
     }
@@ -353,6 +371,7 @@ public class ZipFile implements Closeable {
      * @throws IOException if unable to create an input stream from the zipentry
      * @throws ZipException if the zipentry uses an unsupported feature
      */
+    @Impure
     public InputStream getInputStream(ZipArchiveEntry ze)
         throws IOException, ZipException {
         if (!(ze instanceof Entry)) {
@@ -376,6 +395,7 @@ public class ZipFile implements Closeable {
                 bis.addDummy();
                 final Inflater inflater = new Inflater(true);
                 return new InflaterInputStream(bis, inflater) {
+                    @Impure
                     @Override
                     public void close() throws IOException {
                         super.close();
@@ -402,6 +422,7 @@ public class ZipFile implements Closeable {
      * @throws IOException problem with content's input stream
      * @since 1.5
      */
+    @Impure
     public String getUnixSymlink(ZipArchiveEntry entry) throws IOException {
         if (entry != null && entry.isUnixSymlink()) {
             InputStream in = null;
@@ -424,6 +445,7 @@ public class ZipFile implements Closeable {
      * there are no more references to it.
      * @see #close()
      */
+    @Impure
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -473,6 +495,7 @@ public class ZipFile implements Closeable {
      * @return a map of zipentries that didn't have the language
      * encoding flag set when read.
      */
+    @Impure
     private Map<ZipArchiveEntry, NameAndComment> populateFromCentralDirectory()
         throws IOException {
         HashMap<ZipArchiveEntry, NameAndComment> noUTF8Flag =
@@ -505,6 +528,7 @@ public class ZipFile implements Closeable {
      * from the local file header later.  The current entry may be
      * added to this map.
      */
+    @Impure
     private void
         readCentralDirectoryEntry(Map<ZipArchiveEntry, NameAndComment> noUTF8Flag)
         throws IOException {
@@ -597,6 +621,7 @@ public class ZipFile implements Closeable {
      * even if they are never used - and here a field with only one
      * size would be invalid.</p>
      */
+    @Impure
     private void setSizesAndOffsetFromZip64Extra(ZipArchiveEntry ze,
                                                  OffsetEntry offset,
                                                  int diskStart)
@@ -731,6 +756,7 @@ public class ZipFile implements Closeable {
      * it and positions the stream at the first central directory
      * record.
      */
+    @Impure
     private void positionAtCentralDirectory()
         throws IOException {
         positionAtEndOfCentralDirectoryRecord();
@@ -763,6 +789,7 @@ public class ZipFile implements Closeable {
      * Expects stream to be positioned right behind the &quot;Zip64
      * end of central directory locator&quot;'s signature.
      */
+    @Impure
     private void positionAtCentralDirectory64()
         throws IOException {
         skipBytes(ZIP64_EOCDL_LOCATOR_OFFSET
@@ -787,6 +814,7 @@ public class ZipFile implements Closeable {
      * Expects stream to be positioned at the beginning of the
      * &quot;End of central dir record&quot;.
      */
+    @Impure
     private void positionAtCentralDirectory32()
         throws IOException {
         skipBytes(CFD_LOCATOR_OFFSET);
@@ -798,6 +826,7 @@ public class ZipFile implements Closeable {
      * Searches for the and positions the stream at the start of the
      * &quot;End of central dir record&quot;.
      */
+    @Impure
     private void positionAtEndOfCentralDirectoryRecord()
         throws IOException {
         boolean found = tryToLocateSignature(MIN_EOCD_SIZE, MAX_EOCD_SIZE,
@@ -812,6 +841,7 @@ public class ZipFile implements Closeable {
      * for the given signature, positions the RandomaccessFile right
      * at the signature if it has been found.
      */
+    @Impure
     private boolean tryToLocateSignature(long minDistanceFromEnd,
                                          long maxDistanceFromEnd,
                                          byte[] sig) throws IOException {
@@ -851,6 +881,7 @@ public class ZipFile implements Closeable {
      * Skips the given number of bytes or throws an EOFException if
      * skipping failed.
      */ 
+    @Impure
     private void skipBytes(final int count) throws IOException {
         int totalSkipped = 0;
         while (totalSkipped < count) {
@@ -884,6 +915,7 @@ public class ZipFile implements Closeable {
      * <p>Also records the offsets for the data to read from the
      * entries.</p>
      */
+    @Impure
     private void resolveLocalFileHeaderData(Map<ZipArchiveEntry, NameAndComment>
                                             entriesWithoutUTF8Flag)
         throws IOException {
@@ -933,6 +965,7 @@ public class ZipFile implements Closeable {
      * Checks whether the archive starts with a LFH.  If it doesn't,
      * it may be an empty archive.
      */
+    @Impure
     private boolean startsWithLocalFileHeader() throws IOException {
         archive.seek(0);
         archive.readFully(WORD_BUF);
@@ -949,11 +982,13 @@ public class ZipFile implements Closeable {
         private long loc;
         private boolean addDummyByte = false;
 
+        @Impure
         BoundedInputStream(long start, long remaining) {
             this.remaining = remaining;
             loc = start;
         }
 
+        @Impure
         @Override
         public int read() throws IOException {
             if (remaining-- <= 0) {
@@ -969,6 +1004,7 @@ public class ZipFile implements Closeable {
             }
         }
 
+        @Impure
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             if (remaining <= 0) {
@@ -1003,6 +1039,7 @@ public class ZipFile implements Closeable {
          * Inflater needs an extra dummy byte for nowrap - see
          * Inflater's javadocs.
          */
+        @Impure
         void addDummy() {
             addDummyByte = true;
         }
@@ -1011,6 +1048,7 @@ public class ZipFile implements Closeable {
     private static final class NameAndComment {
         private final byte[] name;
         private final byte[] comment;
+        @SideEffectFree
         private NameAndComment(byte[] name, byte[] comment) {
             this.name = name;
             this.comment = comment;
@@ -1027,6 +1065,8 @@ public class ZipFile implements Closeable {
      */
     private final Comparator<ZipArchiveEntry> OFFSET_COMPARATOR =
         new Comparator<ZipArchiveEntry>() {
+        @Pure
+        @Impure
         public int compare(ZipArchiveEntry e1, ZipArchiveEntry e2) {
             if (e1 == e2) {
                 return 0;
@@ -1053,20 +1093,24 @@ public class ZipFile implements Closeable {
 
         private final OffsetEntry offsetEntry;
 
+        @Impure
         Entry(OffsetEntry offset) {
             this.offsetEntry = offset;
         }
 
+        @Pure
         OffsetEntry getOffsetEntry() {
             return offsetEntry;
         }
 
+        @Pure
         @Override
         public int hashCode() {
             return 3 * super.hashCode()
                 + (int) (offsetEntry.headerOffset % Integer.MAX_VALUE);
         }
 
+        @Pure
         @Override
         public boolean equals(Object other) {
             if (super.equals(other)) {

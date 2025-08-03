@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipEncoding;
@@ -83,6 +85,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * @param is
      * @throws ArchiveException
      */
+    @Impure
     public DumpArchiveInputStream(InputStream is) throws ArchiveException {
         this(is, null);
     }
@@ -95,6 +98,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * for the platform's default encoding
      * @since 1.6
      */
+    @Impure
     public DumpArchiveInputStream(InputStream is, String encoding)
         throws ArchiveException {
         this.raw = new TapeInputStream(is);
@@ -143,12 +147,16 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
                 });
     }
 
+    @Pure
+    @Impure
     @Deprecated
     @Override
     public int getCount() {
         return (int) getBytesRead();
     }
 
+    @Pure
+    @Impure
     @Override
     public long getBytesRead() {
         return raw.getBytesRead();
@@ -157,6 +165,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Return the archive summary information.
      */
+    @Pure
     public DumpArchiveSummary getSummary() {
         return summary;
     }
@@ -164,6 +173,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Read CLRI (deleted inode) segment.
      */
+    @Impure
     private void readCLRI() throws IOException {
         byte[] buffer = raw.readRecord();
 
@@ -188,6 +198,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Read BITS segment.
      */
+    @Impure
     private void readBITS() throws IOException {
         byte[] buffer = raw.readRecord();
 
@@ -212,6 +223,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Read the next entry.
      */
+    @Impure
     public DumpArchiveEntry getNextDumpEntry() throws IOException {
         return getNextEntry();
     }
@@ -219,6 +231,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Read the next entry.
      */
+    @Impure
     @Override
     public DumpArchiveEntry getNextEntry() throws IOException {
         DumpArchiveEntry entry = null;
@@ -315,6 +328,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Read directory entry.
      */
+    @Impure
     private void readDirectoryEntry(DumpArchiveEntry entry)
         throws IOException {
         long size = entry.getEntrySize();
@@ -406,6 +420,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * @param entry
      * @return  full path for specified archive entry, or null if there's a gap.
      */
+    @Impure
     private String getPath(DumpArchiveEntry entry) {
         // build the stack of elements. It's possible that we're 
         // still missing an intermediate value and if so we
@@ -457,6 +472,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * @return The number of bytes read, or -1 at EOF.
      * @throws IOException on error
      */
+    @Impure
     @Override
     public int read(byte[] buf, int off, int len) throws IOException {
         int totalRead = 0;
@@ -516,6 +532,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
     /**
      * Closes the stream for this entry.
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (!isClosed) {
@@ -529,6 +546,8 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * archive. With 32 bytes we can look at the magic value, with a full
      * 1k we can verify the checksum.
      */
+    @Pure
+    @Impure
     public static boolean matches(byte[] buffer, int length) {
         // do we have enough of the header?
         if (length < 32) {

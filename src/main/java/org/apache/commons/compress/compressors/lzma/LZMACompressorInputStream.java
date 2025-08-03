@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.compressors.lzma;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import org.tukaani.xz.LZMAInputStream;
@@ -43,12 +44,14 @@ public class LZMACompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
+    @Impure
     public LZMACompressorInputStream(InputStream inputStream)
             throws IOException {
         in = new LZMAInputStream(inputStream);
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int read() throws IOException {
         int ret = in.read();
@@ -57,6 +60,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int read(byte[] buf, int off, int len) throws IOException {
         int ret = in.read(buf, off, len);
@@ -65,18 +69,21 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public long skip(long n) throws IOException {
         return in.skip(n);
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int available() throws IOException {
         return in.available();
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();

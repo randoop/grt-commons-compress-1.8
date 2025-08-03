@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -25,12 +27,14 @@ class BoundedRandomAccessFileInputStream extends InputStream {
     private final RandomAccessFile file;
     private long bytesRemaining;
 
+    @Impure
     public BoundedRandomAccessFileInputStream(final RandomAccessFile file,
             final long size) {
         this.file = file;
         this.bytesRemaining = size;
     }
     
+    @Impure
     @Override
     public int read() throws IOException {
         if (bytesRemaining > 0) {
@@ -41,6 +45,7 @@ class BoundedRandomAccessFileInputStream extends InputStream {
         }
     }
 
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (bytesRemaining == 0) {
@@ -57,6 +62,7 @@ class BoundedRandomAccessFileInputStream extends InputStream {
         return bytesRead;
     }
 
+    @SideEffectFree
     @Override
     public void close() {
         // the nested RandomAccessFile is controlled externally

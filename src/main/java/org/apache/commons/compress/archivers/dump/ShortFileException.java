@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.dump;
+import org.checkerframework.dataflow.qual.Impure;
 
 
 /**
@@ -26,6 +27,7 @@ package org.apache.commons.compress.archivers.dump;
 public class ShortFileException extends DumpArchiveException {
     private static final long serialVersionUID = 1L;
 
+    @Impure
     public ShortFileException() {
         super("unexpected EOF");
     }

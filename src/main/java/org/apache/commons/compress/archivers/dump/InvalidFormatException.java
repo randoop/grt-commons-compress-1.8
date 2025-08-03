@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.dump;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 
 
 /**
@@ -27,16 +29,19 @@ public class InvalidFormatException extends DumpArchiveException {
     private static final long serialVersionUID = 1L;
     protected long offset;
 
+    @Impure
     public InvalidFormatException() {
         super("there was an error decoding a tape segment");
     }
 
+    @Impure
     public InvalidFormatException(long offset) {
         super("there was an error decoding a tape segment header at offset " +
             offset + ".");
         this.offset = offset;
     }
 
+    @Pure
     public long getOffset() {
         return offset;
     }

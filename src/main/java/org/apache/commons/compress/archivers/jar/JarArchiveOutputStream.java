@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.jar;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -37,11 +38,13 @@ public class JarArchiveOutputStream extends ZipArchiveOutputStream {
 
     private boolean jarMarkerAdded = false;
 
+    @Impure
     public JarArchiveOutputStream(final OutputStream out) {
         super(out);
     }
 
     // @throws ClassCastException if entry is not an instance of ZipArchiveEntry
+    @Impure
     @Override
     public void putArchiveEntry(ArchiveEntry ze) throws IOException {
         if (!jarMarkerAdded) {

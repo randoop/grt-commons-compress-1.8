@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.compressors.bzip2;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * A simple class the hold and calculate the CRC for sanity checking of the
@@ -91,26 +93,32 @@ class CRC {
             0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
         };
 
+        @Impure
         CRC() {
             initialiseCRC();
         }
 
+        @Impure
         void initialiseCRC() {
             globalCrc = 0xffffffff;
         }
 
+        @Pure
         int getFinalCRC() {
             return ~globalCrc;
         }
 
+        @Pure
         int getGlobalCRC() {
             return globalCrc;
         }
 
+        @Impure
         void setGlobalCRC(int newCrc) {
             globalCrc = newCrc;
         }
 
+        @Impure
         void updateCRC(int inCh) {
             int temp = (globalCrc >> 24) ^ inCh;
             if (temp < 0) {
@@ -119,6 +127,7 @@ class CRC {
             globalCrc = (globalCrc << 8) ^ CRC.crc32Table[temp];
         }
 
+        @Impure
         void updateCRC(int inCh, int repeat) {
             int globalCrcShadow = this.globalCrc;
             while (repeat-- > 0) {

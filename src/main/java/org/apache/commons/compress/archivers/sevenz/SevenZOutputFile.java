@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataOutput;
@@ -62,6 +65,7 @@ public class SevenZOutputFile implements Closeable {
      * @param filename name of the file to write to
      * @throws IOException if opening the file fails
      */
+    @Impure
     public SevenZOutputFile(final File filename) throws IOException {
         file = new RandomAccessFile(filename, "rw");
         file.seek(SevenZFile.SIGNATURE_HEADER_SIZE);
@@ -78,6 +82,7 @@ public class SevenZOutputFile implements Closeable {
      * <p>This is a short form for passing a single-element iterable
      * to {@link #setContentMethods}.</p>
      */
+    @Impure
     public void setContentCompression(SevenZMethod method) {
         setContentMethods(Collections.singletonList(new SevenZMethodConfiguration(method)));
     }
@@ -95,6 +100,7 @@ public class SevenZOutputFile implements Closeable {
      *
      * @since 1.8
      */
+    @Impure
     public void setContentMethods(Iterable<? extends SevenZMethodConfiguration> methods) {
         this.contentMethods = reverse(methods);
     }
@@ -104,6 +110,7 @@ public class SevenZOutputFile implements Closeable {
      * 
      * @throws IOException
      */
+    @Impure
     public void close() throws IOException {
         if (!finished) {
             finish();
@@ -120,6 +127,7 @@ public class SevenZOutputFile implements Closeable {
      * 
      * @throws IOException
      */
+    @Impure
     public SevenZArchiveEntry createArchiveEntry(final File inputFile,
             final String entryName) throws IOException {
         final SevenZArchiveEntry entry = new SevenZArchiveEntry();
@@ -138,6 +146,7 @@ public class SevenZOutputFile implements Closeable {
      * @param archiveEntry describes the entry
      * @throws IOException
      */
+    @Impure
     public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
         final SevenZArchiveEntry entry = (SevenZArchiveEntry) archiveEntry;
         files.add(entry);
@@ -147,6 +156,7 @@ public class SevenZOutputFile implements Closeable {
      * Closes the archive entry.
      * @throws IOException
      */
+    @Impure
     public void closeArchiveEntry() throws IOException {
         if (currentOutputStream != null) {
             currentOutputStream.flush();
@@ -187,6 +197,7 @@ public class SevenZOutputFile implements Closeable {
      * @param b The byte to be written.
      * @throws IOException on error
      */
+    @Impure
     public void write(final int b) throws IOException {
         getCurrentOutputStream().write(b);
     }
@@ -196,6 +207,7 @@ public class SevenZOutputFile implements Closeable {
      * @param b The byte array to be written.
      * @throws IOException on error
      */
+    @Impure
     public void write(final byte[] b) throws IOException {
         write(b, 0, b.length);
     }
@@ -207,6 +219,7 @@ public class SevenZOutputFile implements Closeable {
      * @param len number of bytes to write
      * @throws IOException on error
      */
+    @Impure
     public void write(final byte[] b, final int off, final int len) throws IOException {
         if (len > 0) {
             getCurrentOutputStream().write(b, off, len);
@@ -218,6 +231,7 @@ public class SevenZOutputFile implements Closeable {
      * 
      * @throws IOException if archive is already closed.
      */
+    @Impure
     public void finish() throws IOException {
         if (finished) {
             throw new IOException("This archive has already been finished");
@@ -264,6 +278,7 @@ public class SevenZOutputFile implements Closeable {
      * written as some codecs might write header information even for
      * empty streams and directories otherwise.
      */
+    @Impure
     private OutputStream getCurrentOutputStream() throws IOException {
         if (currentOutputStream == null) {
             currentOutputStream = setupFileOutputStream();
@@ -271,6 +286,7 @@ public class SevenZOutputFile implements Closeable {
         return currentOutputStream;
     }
 
+    @Impure
     private CountingOutputStream setupFileOutputStream() throws IOException {
         OutputStream out = new OutputStreamWrapper();
         ArrayList<CountingOutputStream> moreStreams = new ArrayList<CountingOutputStream>();
@@ -288,18 +304,21 @@ public class SevenZOutputFile implements Closeable {
             additionalCountingStreams = moreStreams.toArray(new CountingOutputStream[moreStreams.size()]);
         }
         return new CountingOutputStream(out) {
+            @Impure
             @Override
             public void write(final int b) throws IOException {
                 super.write(b);
                 crc32.update(b);
             }
     
+            @Impure
             @Override
             public void write(final byte[] b) throws IOException {
                 super.write(b);
                 crc32.update(b);
             }
     
+            @Impure
             @Override
             public void write(final byte[] b, final int off, final int len)
                 throws IOException {
@@ -309,11 +328,14 @@ public class SevenZOutputFile implements Closeable {
         };
     }
 
+    @Pure
+    @Impure
     private Iterable<? extends SevenZMethodConfiguration> getContentMethods(SevenZArchiveEntry entry) {
         Iterable<? extends SevenZMethodConfiguration> ms = entry.getContentMethods();
         return ms == null ? contentMethods : ms;
     }
 
+    @Impure
     private void writeHeader(final DataOutput header) throws IOException {
         header.write(NID.kHeader);
         
@@ -323,6 +345,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writeStreamsInfo(final DataOutput header) throws IOException {
         if (numNonEmptyStreams > 0) {
             writePackInfo(header);
@@ -334,6 +357,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writePackInfo(final DataOutput header) throws IOException {
         header.write(NID.kPackInfo);
         
@@ -358,6 +382,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writeUnpackInfo(final DataOutput header) throws IOException {
         header.write(NID.kUnpackInfo);
         
@@ -394,6 +419,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writeFolder(final DataOutput header, SevenZArchiveEntry entry) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int numCoders = 0;
@@ -410,6 +436,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeSingleCodec(SevenZMethodConfiguration m, OutputStream bos) throws IOException {
         byte[] id = m.getMethod().getId();
         byte[] properties = Coders.findByMethod(m.getMethod())
@@ -428,6 +455,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
     
+    @Impure
     private void writeSubStreamsInfo(final DataOutput header) throws IOException {
         header.write(NID.kSubStreamsInfo);
 //        
@@ -442,6 +470,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writeFilesInfo(final DataOutput header) throws IOException {
         header.write(NID.kFilesInfo);
         
@@ -458,6 +487,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(NID.kEnd);
     }
     
+    @Impure
     private void writeFileEmptyStreams(final DataOutput header) throws IOException {
         boolean hasEmptyStreams = false;
         for (final SevenZArchiveEntry entry : files) {
@@ -482,6 +512,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
     
+    @Impure
     private void writeFileEmptyFiles(final DataOutput header) throws IOException {
         boolean hasEmptyFiles = false;
         int emptyStreamCounter = 0;
@@ -505,6 +536,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
     
+    @Impure
     private void writeFileAntiItems(final DataOutput header) throws IOException {
         boolean hasAntiItems = false;
         final BitSet antiItems = new BitSet(0);
@@ -528,6 +560,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
     
+    @Impure
     private void writeFileNames(final DataOutput header) throws IOException {
         header.write(NID.kName);
         
@@ -544,6 +577,7 @@ public class SevenZOutputFile implements Closeable {
         header.write(contents);
     }
 
+    @Impure
     private void writeFileCTimes(final DataOutput header) throws IOException {
         int numCreationDates = 0;
         for (final SevenZArchiveEntry entry : files) {
@@ -580,6 +614,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeFileATimes(final DataOutput header) throws IOException {
         int numAccessDates = 0;
         for (final SevenZArchiveEntry entry : files) {
@@ -616,6 +651,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeFileMTimes(final DataOutput header) throws IOException {
         int numLastModifiedDates = 0;
         for (final SevenZArchiveEntry entry : files) {
@@ -652,6 +688,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeFileWindowsAttributes(final DataOutput header) throws IOException {
         int numWindowsAttributes = 0;
         for (final SevenZArchiveEntry entry : files) {
@@ -687,6 +724,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeUint64(final DataOutput header, long value) throws IOException {
         int firstByte = 0;
         int mask = 0x80;
@@ -706,6 +744,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private void writeBits(final DataOutput header, final BitSet bits, final int length) throws IOException {
         int cache = 0;
         int shift = 7;
@@ -722,6 +761,7 @@ public class SevenZOutputFile implements Closeable {
         }
     }
 
+    @Impure
     private static <T> Iterable<T> reverse(Iterable<T> i) {
         LinkedList<T> l = new LinkedList<T>();
         for (T t : i) {
@@ -731,6 +771,7 @@ public class SevenZOutputFile implements Closeable {
     }
 
     private class OutputStreamWrapper extends OutputStream {
+        @Impure
         @Override
         public void write(final int b) throws IOException {
             file.write(b);
@@ -738,11 +779,13 @@ public class SevenZOutputFile implements Closeable {
             fileBytesWritten++;
         }
     
+        @Impure
         @Override
         public void write(final byte[] b) throws IOException {
             OutputStreamWrapper.this.write(b, 0, b.length);
         }
     
+        @Impure
         @Override
         public void write(final byte[] b, final int off, final int len)
             throws IOException {
@@ -751,11 +794,13 @@ public class SevenZOutputFile implements Closeable {
             fileBytesWritten += len;
         }
 
+        @SideEffectFree
         @Override
         public void flush() throws IOException {
             // no reason to flush a RandomAccessFile
         }
 
+        @SideEffectFree
         @Override
         public void close() throws IOException {
             // the file will be closed by the containing class's close method

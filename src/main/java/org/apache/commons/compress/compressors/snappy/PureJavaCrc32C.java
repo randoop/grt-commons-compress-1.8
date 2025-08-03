@@ -20,6 +20,8 @@
  */
 package org.apache.commons.compress.compressors.snappy;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.zip.Checksum;
 
 /**
@@ -38,19 +40,23 @@ class PureJavaCrc32C implements Checksum {
   private int crc;
 
   /** Create a new PureJavaCrc32 object. */
+  @Impure
   public PureJavaCrc32C() {
     reset();
   }
 
+  @Pure
   public long getValue() {
     long ret = crc;
     return (~ret) & 0xffffffffL;
   }
 
+  @Impure
   public void reset() {
     crc = 0xffffffff;
   }
 
+  @Impure
   public void update(byte[] b, int off, int len) {
     int localCrc = crc;
 
@@ -91,6 +97,7 @@ class PureJavaCrc32C implements Checksum {
     crc = localCrc;
   }
 
+  @Impure
   final public void update(int b) {
     crc = (crc >>> 8) ^ T[T8_0_start + ((crc ^ b) & 0xff)];
   }

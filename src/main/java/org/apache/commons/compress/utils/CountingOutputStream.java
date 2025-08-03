@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,19 +32,23 @@ import java.io.OutputStream;
 public class CountingOutputStream extends FilterOutputStream {
     private long bytesWritten = 0;
 
+    @Impure
     public CountingOutputStream(final OutputStream out) {
         super(out);
     }
 
+    @Impure
     @Override
     public void write(int b) throws IOException {
         out.write(b);
         count(1);
     }
+    @Impure
     @Override
     public void write(byte[] b) throws IOException {
         write(b, 0, b.length);
     }
+    @Impure
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
@@ -55,6 +61,7 @@ public class CountingOutputStream extends FilterOutputStream {
      * 
      * @param written the number of bytes written
      */
+    @Impure
     protected void count(long written) {
         if (written != -1) {
             bytesWritten += written;
@@ -65,6 +72,7 @@ public class CountingOutputStream extends FilterOutputStream {
      * Returns the current number of bytes written to this stream.
      * @return the number of written bytes
      */
+    @Pure
     public long getBytesWritten() {
         return bytesWritten;
     }

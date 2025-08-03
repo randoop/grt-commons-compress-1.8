@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.snappy;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -79,6 +81,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * 
      * @throws IOException
      */
+    @Impure
     public SnappyCompressorInputStream(final InputStream is) throws IOException {
         this(is, DEFAULT_BLOCK_SIZE);
     }
@@ -93,6 +96,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * 
      * @throws IOException
      */
+    @Impure
     public SnappyCompressorInputStream(final InputStream is, final int blockSize)
             throws IOException {
         this.in = is;
@@ -103,18 +107,21 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public int read() throws IOException {
         return read(oneByte, 0, 1) == -1 ? -1 : oneByte[0] & 0xFF;
     }
 
     /** {@inheritDoc} */
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();
     }
 
     /** {@inheritDoc} */
+    @Pure
     @Override
     public int available() {
         return writeIndex - readIndex;
@@ -123,6 +130,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
     /**
      * {@inheritDoc}
      */
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (endReached) {
@@ -148,6 +156,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      *
      * @param len the number of uncompressed bytes to read
      */
+    @Impure
     private void fill(int len) throws IOException {
         if (uncompressedBytesRemaining == 0) {
             endReached = true;
@@ -243,6 +252,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * <p>Move all bytes of the buffer after the first block down to
      * the beginning of the buffer.</p>
      */
+    @Impure
     private void slideBuffer() {
         System.arraycopy(decompressBuf, blockSize, decompressBuf, 0,
                          blockSize * 2);
@@ -261,6 +271,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * or 63 for 1-4 bytes, respectively. The literal itself follows
      * after the length.
      */
+    @Impure
     private int readLiteralLength(int b) throws IOException {
         int length;
         switch (b >> 2) {
@@ -302,6 +313,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      *             some other I/O error occurs.
      * @return True if the decompressed data should be flushed
      */
+    @Impure
     private boolean expandLiteral(final int length) throws IOException {
         int bytesRead = in.read(decompressBuf, writeIndex, length);
         count(bytesRead);
@@ -332,6 +344,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      *             buffer
      * @return True if the decompressed data should be flushed
      */
+    @Impure
     private boolean expandCopy(final long off, int length) throws IOException {
         if (off > blockSize) {
             throw new IOException("Offset is larger than block size");
@@ -377,6 +390,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * @throws IOException
      *             EOF is reached or error reading the stream
      */
+    @Impure
     private int readOneByte() throws IOException {
         int b = in.read();
         if (b == -1) {
@@ -399,6 +413,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * @throws IOException
      *             Could not read a byte
      */
+    @Impure
     private long readSize() throws IOException {
         int index = 0;
         long sz = 0;
@@ -416,6 +431,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * 
      * @return the uncompressed size
      */
+    @Pure
     public int getSize() {
         return size;
     }

@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.Serializable;
 
 import static org.apache.commons.compress.archivers.zip.ZipConstants.BYTE_MASK;
@@ -90,6 +93,7 @@ public final class ZipLong implements Cloneable, Serializable {
      * Create instance from a number.
      * @param value the long to store as a ZipLong
      */
+    @SideEffectFree
     public ZipLong(long value) {
         this.value = value;
     }
@@ -98,6 +102,8 @@ public final class ZipLong implements Cloneable, Serializable {
      * Create instance from bytes.
      * @param bytes the bytes to store as a ZipLong
      */
+    @SideEffectFree
+    @Impure
     public ZipLong (byte[] bytes) {
         this(bytes, 0);
     }
@@ -107,6 +113,8 @@ public final class ZipLong implements Cloneable, Serializable {
      * @param bytes the bytes to store as a ZipLong
      * @param offset the offset to start
      */
+    @SideEffectFree
+    @Impure
     public ZipLong (byte[] bytes, int offset) {
         value = ZipLong.getValue(bytes, offset);
     }
@@ -115,6 +123,7 @@ public final class ZipLong implements Cloneable, Serializable {
      * Get value as four bytes in big endian byte order.
      * @return value as four bytes in big endian order
      */
+    @Impure
     public byte[] getBytes() {
         return ZipLong.getBytes(value);
     }
@@ -123,6 +132,7 @@ public final class ZipLong implements Cloneable, Serializable {
      * Get value as Java long.
      * @return value as a long
      */
+    @Pure
     public long getValue() {
         return value;
     }
@@ -132,6 +142,7 @@ public final class ZipLong implements Cloneable, Serializable {
      * @param value the value to convert
      * @return value as four bytes in big endian byte order
      */
+    @Impure
     public static byte[] getBytes(long value) {
         byte[] result = new byte[WORD];
         result[0] = (byte) ((value & BYTE_MASK));
@@ -147,6 +158,7 @@ public final class ZipLong implements Cloneable, Serializable {
      * @param offset the offset to start
      * @return the corresponding Java long value
      */
+    @Pure
     public static long getValue(byte[] bytes, int offset) {
         long value = (bytes[offset + BYTE_3] << BYTE_3_SHIFT) & BYTE_3_MASK;
         value += (bytes[offset + BYTE_2] << BYTE_2_SHIFT) & BYTE_2_MASK;
@@ -160,6 +172,8 @@ public final class ZipLong implements Cloneable, Serializable {
      * @param bytes the array of bytes
      * @return the corresponding Java long value
      */
+    @Pure
+    @Impure
     public static long getValue(byte[] bytes) {
         return getValue(bytes, 0);
     }
@@ -169,6 +183,8 @@ public final class ZipLong implements Cloneable, Serializable {
      * @param o an object to compare
      * @return true if the objects are equal
      */
+    @Pure
+    @Impure
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ZipLong)) {
@@ -181,11 +197,13 @@ public final class ZipLong implements Cloneable, Serializable {
      * Override to make two instances with same value equal.
      * @return the value stored in the ZipLong
      */
+    @Pure
     @Override
     public int hashCode() {
         return (int) value;
     }
 
+    @SideEffectFree
     @Override
     public Object clone() {
         try {
@@ -196,6 +214,7 @@ public final class ZipLong implements Cloneable, Serializable {
         }
     }
 
+    @Pure
     @Override
     public String toString() {
         return "ZipLong value: " + value;

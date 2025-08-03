@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Simple placeholder for all those extra fields we don't want to deal
@@ -37,6 +40,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Set the header id.
      * @param headerId the header id to use
      */
+    @Impure
     public void setHeaderId(ZipShort headerId) {
         this.headerId = headerId;
     }
@@ -45,6 +49,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Get the header id.
      * @return the header id
      */
+    @Pure
     public ZipShort getHeaderId() {
         return headerId;
     }
@@ -60,6 +65,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * without Header-ID or length specifier.
      * @param data the field data to use
      */
+    @Impure
     public void setLocalFileDataData(byte[] data) {
         localData = ZipUtil.copy(data);
     }
@@ -68,6 +74,8 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Get the length of the local data.
      * @return the length of the local data
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getLocalFileDataLength() {
         return new ZipShort(localData.length);
     }
@@ -76,6 +84,8 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Get the local data.
      * @return the local data
      */
+    @SideEffectFree
+    @Impure
     public byte[] getLocalFileDataData() {
         return ZipUtil.copy(localData);
     }
@@ -90,6 +100,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Set the extra field data in central directory.
      * @param data the data to use
      */
+    @Impure
     public void setCentralDirectoryData(byte[] data) {
         centralData = ZipUtil.copy(data);
     }
@@ -99,6 +110,8 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * If there is no central data, get the local file data length.
      * @return the central data length
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getCentralDirectoryLength() {
         if (centralData != null) {
             return new ZipShort(centralData.length);
@@ -110,6 +123,8 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * Get the central data.
      * @return the central data if present, else return the local file data
      */
+    @SideEffectFree
+    @Impure
     public byte[] getCentralDirectoryData() {
         if (centralData != null) {
             return ZipUtil.copy(centralData);
@@ -123,6 +138,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * @param length the number of bytes to use in the data array.
      * @see ZipExtraField#parseFromLocalFileData(byte[], int, int)
      */
+    @Impure
     public void parseFromLocalFileData(byte[] data, int offset, int length) {
         byte[] tmp = new byte[length];
         System.arraycopy(data, offset, tmp, 0, length);
@@ -135,6 +151,7 @@ public class UnrecognizedExtraField implements ZipExtraField {
      * @param length the number of bytes to use in the data array.
      * @see ZipExtraField#parseFromCentralDirectoryData(byte[], int, int)
      */
+    @Impure
     public void parseFromCentralDirectoryData(byte[] data, int offset,
                                               int length) {
         byte[] tmp = new byte[length];

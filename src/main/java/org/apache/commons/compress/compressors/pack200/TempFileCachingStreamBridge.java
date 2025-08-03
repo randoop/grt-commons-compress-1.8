@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.compressors.pack200;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,16 +34,19 @@ import java.io.InputStream;
 class TempFileCachingStreamBridge extends StreamBridge {
     private final File f;
 
+    @Impure
     TempFileCachingStreamBridge() throws IOException {
         f = File.createTempFile("commons-compress", "packtemp");
         f.deleteOnExit();
         out = new FileOutputStream(f);
     }
 
+    @Impure
     @Override
     InputStream getInputView() throws IOException {
         out.close();
         return new FileInputStream(f) {
+            @Impure
             @Override
             public void close() throws IOException {
                 super.close();

@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.InputStream;
 
 public abstract class CompressorInputStream extends InputStream {
@@ -31,6 +33,7 @@ public abstract class CompressorInputStream extends InputStream {
      *
      * @since 1.1
      */
+    @Impure
     protected void count(int read) {
         count((long) read);
     }
@@ -41,6 +44,7 @@ public abstract class CompressorInputStream extends InputStream {
      * 
      * @param read the number of bytes read
      */
+    @Impure
     protected void count(long read) {
         if (read != -1) {
             bytesRead = bytesRead + read;
@@ -53,6 +57,7 @@ public abstract class CompressorInputStream extends InputStream {
      * @param pushedBack the number of bytes pushed back.
      * @since 1.7
      */
+    @Impure
     protected void pushedBackBytes(long pushedBack) {
         bytesRead -= pushedBack;
     }
@@ -63,6 +68,7 @@ public abstract class CompressorInputStream extends InputStream {
      * @deprecated this method may yield wrong results for large
      * archives, use #getBytesRead instead
      */
+    @Pure
     @Deprecated
     public int getCount() {
         return (int) bytesRead;
@@ -74,6 +80,7 @@ public abstract class CompressorInputStream extends InputStream {
      *
      * @since 1.1
      */
+    @Pure
     public long getBytesRead() {
         return bytesRead;
     }

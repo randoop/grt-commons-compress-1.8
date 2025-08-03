@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.archivers.dump;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +48,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * Constructor
      */
+    @Impure
     public TapeInputStream(InputStream in) {
         super(in);
     }
@@ -64,6 +67,7 @@ class TapeInputStream extends FilterInputStream {
      * @throws IOException
      *             there was an error reading additional blocks.
      */
+    @Impure
     public void resetBlockSize(int recsPerBlock, boolean isCompressed)
         throws IOException {
         this.isCompressed = isCompressed;
@@ -85,6 +89,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * @see java.io.InputStream#available
      */
+    @Impure
     @Override
     public int available() throws IOException {
         if (readOffset < blockSize) {
@@ -97,6 +102,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * @see java.io.InputStream#read()
      */
+    @Pure
     @Override
     public int read() throws IOException {
         throw new IllegalArgumentException(
@@ -112,6 +118,7 @@ class TapeInputStream extends FilterInputStream {
      * @param len length to read, must be a multiple of the stream's
      * record size
      */
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if ((len % recordSize) != 0) {
@@ -158,6 +165,7 @@ class TapeInputStream extends FilterInputStream {
      * @param len length to read, must be a multiple of the stream's
      * record size
      */
+    @Impure
     @Override
     public long skip(long len) throws IOException {
         if ((len % recordSize) != 0) {
@@ -201,6 +209,7 @@ class TapeInputStream extends FilterInputStream {
      *
      * @throws IOException on error
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (in != null && in != System.in) {
@@ -214,6 +223,7 @@ class TapeInputStream extends FilterInputStream {
      * @return The record data.
      * @throws IOException on error
      */
+    @Impure
     public byte[] peek() throws IOException {
         // we need to read from the underlying stream. This
         // isn't a problem since it would be the first step in
@@ -235,6 +245,7 @@ class TapeInputStream extends FilterInputStream {
      * @return The record data.
      * @throws IOException on error
      */
+    @Impure
     public byte[] readRecord() throws IOException {
         byte[] result = new byte[recordSize];
 
@@ -252,6 +263,7 @@ class TapeInputStream extends FilterInputStream {
      *        This is an optimization for longer seeks.
      * @return false if End-Of-File, else true
      */
+    @Impure
     private boolean readBlock(boolean decompress) throws IOException {
         boolean success = true;
 
@@ -332,6 +344,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * Read buffer
      */
+    @Impure
     private boolean readFully(byte[] b, int off, int len)
         throws IOException {
         int count = IOUtils.readFully(in, b, off, len);
@@ -345,6 +358,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * Get number of bytes read.
      */
+    @Pure
     public long getBytesRead() {
         return bytesRead;
     }

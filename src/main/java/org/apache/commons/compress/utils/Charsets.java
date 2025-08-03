@@ -18,6 +18,7 @@
 
 package org.apache.commons.compress.utils;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.nio.charset.Charset;
 
 /**
@@ -68,6 +69,7 @@ public class Charsets {
      *            A charset or null.
      * @return the given Charset or the default Charset if the given Charset is null
      */
+    @Impure
     public static Charset toCharset(Charset charset) {
         return charset == null ? Charset.defaultCharset() : charset;
     }
@@ -83,6 +85,7 @@ public class Charsets {
      * @throws java.nio.charset.IllegalCharsetNameException
      *             If the given charset name is illegal
      */
+    @Impure
     public static Charset toCharset(String charset) {
         return charset == null ? Charset.defaultCharset() : Charset.forName(charset);
     }

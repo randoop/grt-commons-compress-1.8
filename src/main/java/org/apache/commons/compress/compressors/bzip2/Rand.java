@@ -18,6 +18,7 @@
  */
 
 package org.apache.commons.compress.compressors.bzip2;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Random numbers for both the compress and decompress BZip2 classes.
@@ -85,6 +86,7 @@ final class Rand {
      * @param i the index
      * @return the random number
      */
+    @Pure
     static int rNums(int i){
         return RNUMS[i];
     }

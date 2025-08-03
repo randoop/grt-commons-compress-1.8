@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.LinkedList;
 
 /**
@@ -49,6 +51,7 @@ class Folder {
      * only support single input stream decoders), the second reads
      * from the output of the first and so on.</p>
      */
+    @Impure
     Iterable<Coder> getOrderedCoders() {
         LinkedList<Coder> l = new LinkedList<Coder>();
         int current = (int) packedStreams[0]; // more that 2^31 coders?
@@ -60,6 +63,7 @@ class Folder {
         return l;
     }
 
+    @Pure
     int findBindPairForInStream(final int index) {
         for (int i = 0; i < bindPairs.length; i++) {
             if (bindPairs[i].inIndex == index) {
@@ -69,6 +73,7 @@ class Folder {
         return -1;
     }
     
+    @Pure
     int findBindPairForOutStream(final int index) {
         for (int i = 0; i < bindPairs.length; i++) {
             if (bindPairs[i].outIndex == index) {
@@ -78,6 +83,8 @@ class Folder {
         return -1;
     }
     
+    @Pure
+    @Impure
     long getUnpackSize() {
         if (totalOutputStreams == 0) {
             return 0;

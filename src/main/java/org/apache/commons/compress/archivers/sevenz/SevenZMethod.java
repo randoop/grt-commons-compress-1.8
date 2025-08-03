@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.Arrays;
 
 /**
@@ -87,16 +89,19 @@ public enum SevenZMethod {
 
     private final byte[] id;
 
+    @Impure
     private SevenZMethod(byte[] id) {
         this.id = id;
     }
 
+    @SideEffectFree
     byte[] getId() {
         byte[] copy = new byte[id.length];
         System.arraycopy(id, 0, copy, 0, id.length);
         return copy;
     }
 
+    @Impure
     static SevenZMethod byId(byte[] id) {
         for (SevenZMethod m : SevenZMethod.class.getEnumConstants()) {
             if (Arrays.equals(m.id, id)) {

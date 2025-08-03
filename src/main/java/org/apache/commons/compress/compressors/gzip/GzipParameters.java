@@ -19,6 +19,8 @@
 
 package org.apache.commons.compress.compressors.gzip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.zip.Deflater;
 
 /**
@@ -34,6 +36,7 @@ public class GzipParameters {
     private String comment;
     private int operatingSystem = 255; // Unknown OS by default
 
+    @Pure
     public int getCompressionLevel() {
         return compressionLevel;
     }
@@ -47,6 +50,7 @@ public class GzipParameters {
      * @see Deflater#DEFAULT_COMPRESSION
      * @see Deflater#BEST_COMPRESSION
      */
+    @Impure
     public void setCompressionLevel(int compressionLevel) {
         if (compressionLevel < -1 || compressionLevel > 9) {
             throw new IllegalArgumentException("Invalid gzip compression level: " + compressionLevel);
@@ -54,6 +58,7 @@ public class GzipParameters {
         this.compressionLevel = compressionLevel;
     }
 
+    @Pure
     public long getModificationTime() {
         return modificationTime;
     }
@@ -63,10 +68,12 @@ public class GzipParameters {
      * 
      * @param modificationTime the modification time, in milliseconds
      */
+    @Impure
     public void setModificationTime(long modificationTime) {
         this.modificationTime = modificationTime;
     }
 
+    @Pure
     public String getFilename() {
         return filename;
     }
@@ -76,18 +83,22 @@ public class GzipParameters {
      * 
      * @param filename the name of the file without the directory path
      */
+    @Impure
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
+    @Pure
     public String getComment() {
         return comment;
     }
 
+    @Impure
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    @Pure
     public int getOperatingSystem() {
         return operatingSystem;
     }
@@ -115,6 +126,7 @@ public class GzipParameters {
      * 
      * @param operatingSystem the code of the operating system
      */
+    @Impure
     public void setOperatingSystem(int operatingSystem) {
         this.operatingSystem = operatingSystem;
     }

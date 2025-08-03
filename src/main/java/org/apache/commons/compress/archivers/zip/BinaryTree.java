@@ -19,6 +19,7 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,7 @@ class BinaryTree {
      */
     private final int[] tree;
 
+    @Impure
     public BinaryTree(int depth) {
         tree = new int[(1 << (depth + 1)) - 1];
         Arrays.fill(tree, UNDEFINED);
@@ -57,6 +59,7 @@ class BinaryTree {
      * @param depth  the number of nodes in the path
      * @param value  the value of the leaf (must be positive)
      */
+    @Impure
     public void addLeaf(int node, int path, int depth, int value) {
         if (depth == 0) {
             // end of the path reached, add the value to the current node
@@ -81,6 +84,7 @@ class BinaryTree {
      * @param stream
      * @return the value decoded, or -1 if the end of the stream is reached
      */
+    @Impure
     public int read(BitStream stream) throws IOException {
         int currentIndex = 0;
 
@@ -107,6 +111,7 @@ class BinaryTree {
     /**
      * Decodes the packed binary tree from the specified stream.
      */
+    @Impure
     static BinaryTree decode(InputStream in, final int totalNumberOfValues) throws IOException {
         // the first byte contains the size of the structure minus one
         int size = in.read() + 1;

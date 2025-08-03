@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.compressors.bzip2;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.BitSet;
 
 /**
@@ -146,10 +149,12 @@ class BlockSort {
      */
     private final char[] quadrant;
 
+    @SideEffectFree
     BlockSort(final BZip2CompressorOutputStream.Data data) {
         this.quadrant = data.sfmap;
     }
 
+    @Impure
     void blockSort(final BZip2CompressorOutputStream.Data data, final int last) {
         this.workLimit = WORK_FACTOR * last;
         this.workDone = 0;
@@ -182,6 +187,7 @@ class BlockSort {
      * code, in particular deal with the fact that block starts at
      * offset 1 (in libbzip2 1.0.6 it starts at 0).
      */
+    @Impure
     final void fallbackSort(final BZip2CompressorOutputStream.Data data,
                             final int last) {
         data.block[0] = data.block[last + 1];
@@ -264,6 +270,7 @@ class BlockSort {
      * @param lo lower boundary of the fmap-interval to be sorted 
      * @param hi upper boundary of the fmap-interval to be sorted 
      */
+    @Impure
     private void fallbackSimpleSort(int[] fmap, 
                                     int[] eclass, 
                                     int lo, 
@@ -300,6 +307,7 @@ class BlockSort {
     /**
      * swaps two values in fmap
      */
+    @Impure
     private void fswap(int[] fmap, int zz1, int zz2) {
         int zztmp = fmap[zz1];
         fmap[zz1] = fmap[zz2];
@@ -309,6 +317,7 @@ class BlockSort {
     /**
      * swaps two intervals starting at yyp1 and yyp2 of length yyn inside fmap.
      */
+    @Impure
     private void fvswap(int[] fmap, int yyp1, int yyp2, int yyn) {
         while (yyn > 0) {
             fswap(fmap, yyp1, yyp2);
@@ -316,15 +325,18 @@ class BlockSort {
         }
     }
 
+    @Pure
     private int fmin(int a, int b) {
         return a < b ? a : b;
     }
 
+    @Impure
     private void fpush(int sp, int lz, int hz) {
         stack_ll[sp] = lz;
         stack_hh[sp] = hz;
     }
 
+    @Pure
     private int[] fpop(int sp) {
         return new int[] { stack_ll[sp], stack_hh[sp] };
     }
@@ -339,6 +351,7 @@ class BlockSort {
      * @param loSt lower boundary of the fmap-interval to be sorted 
      * @param hiSt upper boundary of the fmap-interval to be sorted 
      */
+    @Impure
     private void fallbackQSort3(int[] fmap, 
                                 int[] eclass, 
                                 int loSt, 
@@ -444,6 +457,7 @@ class BlockSort {
 
     private int[] eclass;
 
+    @Impure
     private int[] getEclass() {
         return eclass == null
             ? (eclass = new int[quadrant.length / 2]) : eclass;
@@ -467,6 +481,7 @@ class BlockSort {
      * @param nblock size of the block
      * @param off offset of first byte to sort in block
      */
+    @Impure
     final void fallbackSort(int[] fmap, byte[] block, int nblock) {
         final int[] ftab = new int[257];
         int H, i, j, k, l, r, cc, cc1;
@@ -591,6 +606,7 @@ class BlockSort {
      * JIT compiler of the vm.
      * </p>
      */
+    @Impure
     private boolean mainSimpleSort(final BZip2CompressorOutputStream.Data dataShadow,
                                    final int lo, final int hi, final int d,
                                    final int lastShadow) {
@@ -783,6 +799,7 @@ class BlockSort {
    Sedgewick and Jon L. Bentley.
 --*/
 
+    @Impure
     private static void vswap(int[] fmap, int p1, int p2, int n) {
         n += p1;
         while (p1 < n) {
@@ -792,6 +809,7 @@ class BlockSort {
         }
     }
 
+    @Pure
     private static byte med3(byte a, byte b, byte c) {
         return (a < b) ? (b < c ? b : a < c ? c : a) : (b > c ? b : a > c ? c
                                                         : a);
@@ -804,6 +822,7 @@ class BlockSort {
     /**
      * Method "mainQSort3", file "blocksort.c", BZip2 1.0.2
      */
+    @Impure
     private void mainQSort3(final BZip2CompressorOutputStream.Data dataShadow,
                             final int loSt, final int hiSt, final int dSt,
                             final int last) {
@@ -912,6 +931,7 @@ class BlockSort {
     private static final int SETMASK = (1 << 21);
     private static final int CLEARMASK = (~SETMASK);
 
+    @Impure
     final void mainSort(final BZip2CompressorOutputStream.Data dataShadow,
                         final int lastShadow) {
         final int[] runningOrder = this.mainSort_runningOrder;

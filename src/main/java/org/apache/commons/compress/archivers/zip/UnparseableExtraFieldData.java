@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Wrapper for extra field data that doesn't conform to the recommended format of header-tag + size + data.
@@ -39,6 +42,7 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      *
      * @return a completely arbitrary value that should be ignored.
      */
+    @Pure
     public ZipShort getHeaderId() {
         return HEADER_ID;
     }
@@ -48,6 +52,8 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      *
      * @return The LocalFileDataLength value
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getLocalFileDataLength() {
         return new ZipShort(localFileData == null ? 0 : localFileData.length);
     }
@@ -57,6 +63,8 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      *
      * @return The CentralDirectoryLength value
      */
+    @SideEffectFree
+    @Impure
     public ZipShort getCentralDirectoryLength() {
         return centralDirectoryData == null
             ? getLocalFileDataLength()
@@ -68,6 +76,8 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      *
      * @return The LocalFileDataData value
      */
+    @SideEffectFree
+    @Impure
     public byte[] getLocalFileDataData() {
         return ZipUtil.copy(localFileData);
     }
@@ -77,6 +87,8 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      *
      * @return The CentralDirectoryData value
      */
+    @SideEffectFree
+    @Impure
     public byte[] getCentralDirectoryData() {
         return centralDirectoryData == null
             ? getLocalFileDataData() : ZipUtil.copy(centralDirectoryData);
@@ -89,6 +101,7 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      * @param offset offset into buffer to read data
      * @param length the length of data
      */
+    @Impure
     public void parseFromLocalFileData(byte[] buffer, int offset, int length) {
         localFileData = new byte[length];
         System.arraycopy(buffer, offset, localFileData, 0, length);
@@ -101,6 +114,7 @@ public final class UnparseableExtraFieldData implements ZipExtraField {
      * @param offset offset into buffer to read data
      * @param length the length of data
      */
+    @Impure
     public void parseFromCentralDirectoryData(byte[] buffer, int offset,
                                               int length) {
         centralDirectoryData = new byte[length];

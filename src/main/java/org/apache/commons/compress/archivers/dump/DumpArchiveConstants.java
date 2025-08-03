@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.apache.commons.compress.archivers.dump;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Various constants associated with dump archives.
@@ -33,6 +35,7 @@ public final class DumpArchiveConstants {
     public static final int NAMELEN = 64;
 
     /* do not instantiate */
+    @SideEffectFree
     private DumpArchiveConstants() {
     }
 
@@ -49,10 +52,12 @@ public final class DumpArchiveConstants {
 
         int code;
 
+        @Impure
         private SEGMENT_TYPE(int code) {
             this.code = code;
         }
 
+        @Impure
         public static SEGMENT_TYPE find(int code) {
             for (SEGMENT_TYPE t : values()) {
                 if (t.code == code) {
@@ -74,10 +79,12 @@ public final class DumpArchiveConstants {
 
         int code;
 
+        @Impure
         private COMPRESSION_TYPE(int code) {
             this.code = code;
         }
 
+        @Impure
         public static COMPRESSION_TYPE find(int code) {
             for (COMPRESSION_TYPE t : values()) {
                 if (t.code == code) {

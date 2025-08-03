@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.changes;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -48,6 +51,7 @@ public class ChangeSetPerformer {
      * Constructs a ChangeSetPerformer with the changes from this ChangeSet
      * @param changeSet the ChangeSet which operations are used for performing
      */
+    @Impure
     public ChangeSetPerformer(final ChangeSet changeSet) {
         changes = changeSet.getChanges();
     }
@@ -67,6 +71,7 @@ public class ChangeSetPerformer {
      *             if an read/write error occurs
      * @return the results of this operation
      */
+    @Impure
     public ChangeSetResults perform(ArchiveInputStream in, ArchiveOutputStream out)
             throws IOException {
         return perform(new ArchiveInputStreamIterator(in), out);
@@ -88,6 +93,7 @@ public class ChangeSetPerformer {
      * @return the results of this operation
      * @since 1.5
      */
+    @Impure
     public ChangeSetResults perform(ZipFile in, ArchiveOutputStream out)
             throws IOException {
         return perform(new ZipFileIterator(in), out);
@@ -108,6 +114,7 @@ public class ChangeSetPerformer {
      *             if an read/write error occurs
      * @return the results of this operation
      */
+    @Impure
     private ChangeSetResults perform(ArchiveEntryIterator entryIterator,
                                      ArchiveOutputStream out)
             throws IOException {
@@ -184,6 +191,7 @@ public class ChangeSetPerformer {
      *            the entry to check
      * @return true, if this entry has an deletion change later, false otherwise
      */
+    @Impure
     private boolean isDeletedLater(Set<Change> workingSet, ArchiveEntry entry) {
         String source = entry.getName();
 
@@ -215,6 +223,7 @@ public class ChangeSetPerformer {
      * @throws IOException
      *             if data cannot be read or written
      */
+    @Impure
     private void copyStream(InputStream in, ArchiveOutputStream out,
             ArchiveEntry entry) throws IOException {
         out.putArchiveEntry(entry);
@@ -232,8 +241,11 @@ public class ChangeSetPerformer {
      * ArchiveInputStream#getNextEntry.</p>
      */
     interface ArchiveEntryIterator {
+        @Impure
         boolean hasNext() throws IOException;
+        @Impure
         ArchiveEntry next();
+        @Impure
         InputStream getInputStream() throws IOException;
     }
 
@@ -241,15 +253,19 @@ public class ChangeSetPerformer {
         implements ArchiveEntryIterator {
         private final ArchiveInputStream in;
         private ArchiveEntry next;
+        @SideEffectFree
         ArchiveInputStreamIterator(ArchiveInputStream in) {
             this.in = in;
         }
+        @Impure
         public boolean hasNext() throws IOException {
             return (next = in.getNextEntry()) != null;
         }
+        @Pure
         public ArchiveEntry next() {
             return next;
         }
+        @Pure
         public InputStream getInputStream() {
             return in;
         }
@@ -260,16 +276,20 @@ public class ChangeSetPerformer {
         private final ZipFile in;
         private final Enumeration<ZipArchiveEntry> nestedEnum;
         private ZipArchiveEntry current;
+        @Impure
         ZipFileIterator(ZipFile in) {
             this.in = in;
             nestedEnum = in.getEntriesInPhysicalOrder();
         }
+        @Pure
         public boolean hasNext() {
             return nestedEnum.hasMoreElements();
         }
+        @Impure
         public ArchiveEntry next() {
             return current = nestedEnum.nextElement();
         }
+        @Impure
         public InputStream getInputStream() throws IOException {
             return in.getInputStream(current);
         }

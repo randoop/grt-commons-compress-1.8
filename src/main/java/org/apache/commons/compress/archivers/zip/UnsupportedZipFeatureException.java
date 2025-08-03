@@ -18,6 +18,9 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.util.zip.ZipException;
 
 /**
@@ -36,6 +39,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      * @param reason the feature that is not supported
      * @param entry the entry using the feature
      */
+    @Impure
     public UnsupportedZipFeatureException(Feature reason,
                                           ZipArchiveEntry entry) {
         super("unsupported feature " + reason +  " used in entry "
@@ -51,6 +55,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      * @param entry the entry using the feature
      * @since 1.5
      */
+    @Impure
     public UnsupportedZipFeatureException(ZipMethod method,
                                           ZipArchiveEntry entry) {
         super("unsupported feature method '" + method.name()
@@ -66,6 +71,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      * @param reason the feature that is not supported
      * @since 1.5
      */
+    @Impure
     public UnsupportedZipFeatureException(Feature reason) {
         super("unsupported feature " + reason +  " used in archive.");
         this.reason = reason;
@@ -75,6 +81,7 @@ public class UnsupportedZipFeatureException extends ZipException {
     /**
      * The unsupported feature that has been used.
      */
+    @Pure
     public Feature getFeature() {
         return reason;
     }
@@ -82,6 +89,7 @@ public class UnsupportedZipFeatureException extends ZipException {
     /**
      * The entry using the unsupported feature.
      */
+    @Pure
     public ZipArchiveEntry getEntry() {
         return entry;
     }
@@ -111,10 +119,12 @@ public class UnsupportedZipFeatureException extends ZipException {
 
         private final String name;
 
+        @SideEffectFree
         private Feature(String name) {
             this.name = name;
         }
 
+        @Pure
         @Override
         public String toString() {
             return name;

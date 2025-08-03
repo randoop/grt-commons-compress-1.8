@@ -18,6 +18,7 @@
  */
 package org.apache.commons.compress.archivers.ar;
 
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,6 +48,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
     /** indicates if this archive is finished */
     private boolean finished = false;
 
+    @Impure
     public ArArchiveOutputStream( final OutputStream pOut ) {
         this.out = pOut;
     }
@@ -59,16 +61,19 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
      * @param longFileMode the mode to use
      * @since 1.3
      */
+    @Impure
     public void setLongFileMode(int longFileMode) {
         this.longFileMode = longFileMode;
     }
 
+    @Impure
     private long writeArchiveHeader() throws IOException {
         byte [] header = ArchiveUtils.toAsciiBytes(ArArchiveEntry.HEADER);
         out.write(header);
         return header.length;
     }
 
+    @Impure
     @Override
     public void closeArchiveEntry() throws IOException {
         if(finished) {
@@ -83,6 +88,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         haveUnclosedEntry = false;
     }
 
+    @Impure
     @Override
     public void putArchiveEntry( final ArchiveEntry pEntry ) throws IOException {
         if(finished) {
@@ -110,6 +116,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         haveUnclosedEntry = true;
     }
 
+    @Impure
     private long fill( final long pOffset, final long pNewOffset, final char pFill ) throws IOException { 
         final long diff = pNewOffset - pOffset;
 
@@ -122,12 +129,14 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         return pNewOffset;
     }
 
+    @Impure
     private long write( final String data ) throws IOException {
         final byte[] bytes = data.getBytes("ascii");
         write(bytes);
         return bytes.length;
     }
 
+    @Impure
     private long writeEntryHeader( final ArArchiveEntry pEntry ) throws IOException {
 
         long offset = 0;
@@ -194,6 +203,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         return offset;
     }
 
+    @Impure
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
@@ -204,6 +214,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
     /**
      * Calls finish if necessary, and then closes the OutputStream
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if(!finished) {
@@ -213,6 +224,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         prevEntry = null;
     }
 
+    @Impure
     @Override
     public ArchiveEntry createArchiveEntry(File inputFile, String entryName)
             throws IOException {
@@ -222,6 +234,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         return new ArArchiveEntry(inputFile, entryName);
     }
 
+    @Impure
     @Override
     public void finish() throws IOException {
         if(haveUnclosedEntry) {

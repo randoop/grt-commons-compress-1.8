@@ -17,6 +17,9 @@
  */
 
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.Impure;
 
 /**
  * Info-ZIP Unicode Comment Extra Field (0x6375):
@@ -33,6 +36,8 @@ public class UnicodeCommentExtraField extends AbstractUnicodeExtraField {
 
     public static final ZipShort UCOM_ID = new ZipShort(0x6375);
 
+    @SideEffectFree
+    @Impure
     public UnicodeCommentExtraField () { 
     }
 
@@ -46,6 +51,7 @@ public class UnicodeCommentExtraField extends AbstractUnicodeExtraField {
      * @param len The length of the encoded comment or comment in
      * <code>bytes</code>.
      */
+    @Impure
     public UnicodeCommentExtraField(String text, byte[] bytes, int off,
                                     int len) {
         super(text, bytes, off, len);
@@ -58,10 +64,12 @@ public class UnicodeCommentExtraField extends AbstractUnicodeExtraField {
      * @param comment The file comment
      * @param bytes the bytes actually written to the archive
      */
+    @Impure
     public UnicodeCommentExtraField(String comment, byte[] bytes) {
         super(comment, bytes);
     }
 
+    @Pure
     public ZipShort getHeaderId() {
         return UCOM_ID;
     }

@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.gzip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
@@ -97,6 +99,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @throws IOException if the stream could not be created
      */
+    @Impure
     public GzipCompressorInputStream(InputStream inputStream)
             throws IOException {
         this(inputStream, false);
@@ -122,6 +125,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @throws IOException if the stream could not be created
      */
+    @Impure
     public GzipCompressorInputStream(InputStream inputStream,
                                      boolean decompressConcatenated)
             throws IOException {
@@ -143,10 +147,12 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      * @return the stream's meta data
      * @since 1.8
      */
+    @Pure
     public GzipParameters getMetaData() {
         return parameters;
     }
 
+    @Impure
     private boolean init(boolean isFirstMember) throws IOException {
         assert isFirstMember || decompressConcatenated;
 
@@ -236,6 +242,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return true;
     }
 
+    @Impure
     private byte[] readToNull(DataInputStream inData) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b = 0;
@@ -245,6 +252,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return bos.toByteArray();
     }
 
+    @Impure
     private int readLittleEndianInt(DataInputStream inData) throws IOException {
         return inData.readUnsignedByte()
             | (inData.readUnsignedByte() << 8)
@@ -252,6 +260,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
             | (inData.readUnsignedByte() << 24);
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         return read(oneByte, 0, 1) == -1 ? -1 : oneByte[0] & 0xFF;
@@ -262,6 +271,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @since 1.1
      */
+    @Impure
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (endReached) {
@@ -359,6 +369,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @since 1.1
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
 
         if (length < 2) {
@@ -381,6 +392,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @since 1.2
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (inf != null) {

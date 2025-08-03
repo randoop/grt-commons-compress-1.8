@@ -17,6 +17,9 @@
  */
 package org.apache.commons.compress.archivers.arj;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.File;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -33,10 +36,12 @@ import org.apache.commons.compress.archivers.zip.ZipUtil;
 public class ArjArchiveEntry implements ArchiveEntry {
     private final LocalFileHeader localFileHeader;
     
+    @Impure
     public ArjArchiveEntry() {
         localFileHeader = new LocalFileHeader();
     }
     
+    @SideEffectFree
     ArjArchiveEntry(final LocalFileHeader localFileHeader) {
         this.localFileHeader = localFileHeader;
     }
@@ -46,6 +51,7 @@ public class ArjArchiveEntry implements ArchiveEntry {
      *
      * @return This entry's name.
      */
+    @SideEffectFree
     public String getName() {
         if ((localFileHeader.arjFlags & LocalFileHeader.Flags.PATHSYM) != 0) {
             return localFileHeader.name.replaceAll("/",
@@ -60,11 +66,13 @@ public class ArjArchiveEntry implements ArchiveEntry {
      *
      * @return This entry's file size.
      */
+    @Pure
     public long getSize() {
         return localFileHeader.originalSize;
     }
 
     /** True if the entry refers to a directory */
+    @Pure
     public boolean isDirectory() {
         return localFileHeader.fileType == LocalFileHeader.FileTypes.DIRECTORY;
     }
@@ -82,6 +90,7 @@ public class ArjArchiveEntry implements ArchiveEntry {
      * non-Unix system and a time taking the current timezone into
      * account if the archive has beeen created on Unix.</p>
      */
+    @Impure
     public Date getLastModifiedDate() {
         long ts = isHostOsUnix() ? localFileHeader.dateTimeModified * 1000l
             : ZipUtil.dosToJavaTime(0xFFFFFFFFL & localFileHeader.dateTimeModified);
@@ -93,6 +102,7 @@ public class ArjArchiveEntry implements ArchiveEntry {
      *
      * <p>The format depends on the host os that created the entry.</p>
      */
+    @Pure
     public int getMode() {
         return localFileHeader.fileAccessMode;
     }
@@ -102,6 +112,8 @@ public class ArjArchiveEntry implements ArchiveEntry {
      *
      * <p>Will only be non-zero of the host os was UNIX.
      */
+    @Pure
+    @Impure
     public int getUnixMode() {
         return isHostOsUnix() ? getMode() : 0;
     }
@@ -110,6 +122,7 @@ public class ArjArchiveEntry implements ArchiveEntry {
      * The operating system the archive has been created on.
      * @see HostOs
      */
+    @Pure
     public int getHostOs() {
         return localFileHeader.hostOS;
     }
@@ -118,6 +131,8 @@ public class ArjArchiveEntry implements ArchiveEntry {
      * Is the operating system the archive has been created on one
      * that is considered a UNIX OS by arj?
      */
+    @Pure
+    @Impure
     public boolean isHostOsUnix() {
         return getHostOs() == HostOs.UNIX || getHostOs() == HostOs.NEXT;
     }

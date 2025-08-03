@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.apache.commons.compress.compressors;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Compressor related exception
@@ -33,6 +34,7 @@ public class CompressorException extends Exception {
      * @param message
      *            the detail message
      */
+    @SideEffectFree
     public CompressorException(String message) {
         super(message);
     }
@@ -45,6 +47,7 @@ public class CompressorException extends Exception {
      * @param cause
      *            the cause
      */
+    @SideEffectFree
     public CompressorException(String message, Throwable cause) {
         super(message, cause);
     }

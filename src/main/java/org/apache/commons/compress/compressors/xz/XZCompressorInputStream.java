@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.xz;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.InputStream;
 import org.tukaani.xz.XZ;
@@ -40,6 +42,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
      * @param   length        the number of bytes to check
      * @return  true if signature matches the .xz magic bytes, false otherwise
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
         if (length < XZ.HEADER_MAGIC.length) {
             return false;
@@ -67,6 +70,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
+    @Impure
     public XZCompressorInputStream(InputStream inputStream)
             throws IOException {
         this(inputStream, false);
@@ -89,6 +93,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
+    @Impure
     public XZCompressorInputStream(InputStream inputStream,
                                    boolean decompressConcatenated)
             throws IOException {
@@ -99,6 +104,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
         }
     }
 
+    @Impure
     @Override
     public int read() throws IOException {
         int ret = in.read();
@@ -106,6 +112,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
         return ret;
     }
 
+    @Impure
     @Override
     public int read(byte[] buf, int off, int len) throws IOException {
         int ret = in.read(buf, off, len);
@@ -113,16 +120,19 @@ public class XZCompressorInputStream extends CompressorInputStream {
         return ret;
     }
 
+    @Impure
     @Override
     public long skip(long n) throws IOException {
         return in.skip(n);
     }
 
+    @Impure
     @Override
     public int available() throws IOException {
         return in.available();
     }
 
+    @Impure
     @Override
     public void close() throws IOException {
         in.close();

@@ -19,6 +19,8 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -47,6 +49,7 @@ class NioZipEncoding implements ZipEncoding {
      * 
      * @param charset The NIO charset to wrap.
      */
+    @SideEffectFree
     public NioZipEncoding(Charset charset) {
         this.charset = charset;
     }
@@ -55,6 +58,7 @@ class NioZipEncoding implements ZipEncoding {
      * @see
      * org.apache.commons.compress.archivers.zip.ZipEncoding#canEncode(java.lang.String)
      */
+    @Impure
     public boolean canEncode(String name) {
         CharsetEncoder enc = this.charset.newEncoder();
         enc.onMalformedInput(CodingErrorAction.REPORT);
@@ -67,6 +71,7 @@ class NioZipEncoding implements ZipEncoding {
      * @see
      * org.apache.commons.compress.archivers.zip.ZipEncoding#encode(java.lang.String)
      */
+    @Impure
     public ByteBuffer encode(String name) {
         CharsetEncoder enc = this.charset.newEncoder();
 
@@ -114,6 +119,7 @@ class NioZipEncoding implements ZipEncoding {
      * @see
      * org.apache.commons.compress.archivers.zip.ZipEncoding#decode(byte[])
      */
+    @Impure
     public String decode(byte[] data) throws IOException {
         return this.charset.newDecoder()
             .onMalformedInput(CodingErrorAction.REPORT)

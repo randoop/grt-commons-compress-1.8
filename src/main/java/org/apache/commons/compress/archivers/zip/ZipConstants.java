@@ -16,6 +16,7 @@
  *
  */
 package org.apache.commons.compress.archivers.zip;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * Various constants used throughout the package.
@@ -23,6 +24,7 @@ package org.apache.commons.compress.archivers.zip;
  * @since 1.3
  */
 final class ZipConstants {
+    @SideEffectFree
     private ZipConstants() { }
 
     /** Masks last eight bits */

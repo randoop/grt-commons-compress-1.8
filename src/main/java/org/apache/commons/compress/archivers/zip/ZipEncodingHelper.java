@@ -18,6 +18,8 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -49,6 +51,7 @@ public abstract class ZipEncodingHelper {
          * 
          * @see Simple8BitZipEncoding#Simple8BitZipEncoding(char[])
          */
+        @SideEffectFree
         SimpleEncodingHolder(char [] highChars) {
             this.highChars = highChars;
         }
@@ -57,6 +60,7 @@ public abstract class ZipEncodingHelper {
          * @return The associated {@link Simple8BitZipEncoding}, which
          *         is instantiated if not done so far.
          */
+        @Impure
         public synchronized Simple8BitZipEncoding getEncoding() {
             if (this.encoding == null) {
                 this.encoding = new Simple8BitZipEncoding(this.highChars);
@@ -149,6 +153,7 @@ public abstract class ZipEncodingHelper {
      *         of <code>r</code>.
      *
      */
+    @Impure
     static ByteBuffer growBuffer(ByteBuffer b, int newCapacity) {
         b.limit(b.position());
         b.rewind();
@@ -178,6 +183,7 @@ public abstract class ZipEncodingHelper {
      * @param bb The byte buffer to write to.
      * @param c The character to write.
      */
+    @Impure
     static void appendSurrogate(ByteBuffer bb, char c) {
 
         bb.put((byte) '%');
@@ -207,6 +213,7 @@ public abstract class ZipEncodingHelper {
      *             the platform's default encoding.
      * @return A zip encoding for the given encoding name.
      */
+    @Impure
     public static ZipEncoding getZipEncoding(String name) {
  
         // fallback encoding is good enough for UTF-8.
@@ -240,6 +247,7 @@ public abstract class ZipEncodingHelper {
      * @param charsetName
      *            If the given name is null, then check the platform's default encoding.
      */
+    @Impure
     static boolean isUTF8(String charsetName) {
         if (charsetName == null) {
             // check platform's default encoding

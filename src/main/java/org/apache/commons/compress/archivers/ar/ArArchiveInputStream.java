@@ -18,6 +18,9 @@
  */
 package org.apache.commons.compress.archivers.ar;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,6 +70,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * @param pInput
      *            the ar input stream
      */
+    @Impure
     public ArArchiveInputStream(final InputStream pInput) {
         input = pInput;
         closed = false;
@@ -79,6 +83,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * @throws IOException
      *             if the entry could not be read
      */
+    @Impure
     public ArArchiveEntry getNextArEntry() throws IOException {
         if (currentEntry != null) {
             final long entryEnd = entryOffset + currentEntry.getLength();
@@ -172,6 +177,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * @return the extended file name; without trailing "/" if present.
      * @throws IOException if name not found or buffer not set up
      */
+    @Impure
     private String getExtendedName(int offset) throws IOException{
         if (namebuffer == null) {
             throw new IOException("Cannot process GNU long filename as no // record was found");
@@ -186,22 +192,32 @@ public class ArArchiveInputStream extends ArchiveInputStream {
         }
         throw new IOException("Failed to read entry: "+offset);
     }
+    @SideEffectFree
+    @Impure
     private long asLong(byte[] input) {
         return Long.parseLong(ArchiveUtils.toAsciiString(input).trim());
     }
 
+    @SideEffectFree
+    @Impure
     private int asInt(byte[] input) {
         return asInt(input, 10, false);
     }
 
+    @SideEffectFree
+    @Impure
     private int asInt(byte[] input, boolean treatBlankAsZero) {
         return asInt(input, 10, treatBlankAsZero);
     }
 
+    @SideEffectFree
+    @Impure
     private int asInt(byte[] input, int base) {
         return asInt(input, base, false);
     }
 
+    @SideEffectFree
+    @Impure
     private int asInt(byte[] input, int base, boolean treatBlankAsZero) {
         String string = ArchiveUtils.toAsciiString(input).trim();
         if (string.length() == 0 && treatBlankAsZero) {
@@ -216,6 +232,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * @see
      * org.apache.commons.compress.archivers.ArchiveInputStream#getNextEntry()
      */
+    @Impure
     @Override
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextArEntry();
@@ -226,6 +243,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * 
      * @see java.io.InputStream#close()
      */
+    @Impure
     @Override
     public void close() throws IOException {
         if (!closed) {
@@ -240,6 +258,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * 
      * @see java.io.InputStream#read(byte[], int, int)
      */
+    @Impure
     @Override
     public int read(byte[] b, final int off, final int len) throws IOException {
         int toRead = len;
@@ -267,6 +286,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      *            the number of bytes to check
      * @return true, if this stream is an Ar archive stream, false otherwise
      */
+    @Pure
     public static boolean matches(byte[] signature, int length) {
         // 3c21 7261 6863 0a3e
 
@@ -329,6 +349,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      *
      * @since 1.3
      */
+    @SideEffectFree
     private static boolean isBSDLongName(String name) {
         return name != null && name.matches(BSD_LONGNAME_PATTERN);
     }
@@ -341,6 +362,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      *
      * @since 1.3
      */
+    @Impure
     private String getBSDLongName(String bsdLongName) throws IOException {
         int nameLen =
             Integer.parseInt(bsdLongName.substring(BSD_LONGNAME_PREFIX_LEN));
@@ -372,6 +394,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * characters. Note that the decimal offsets are number of
      * characters, not line or string number within the "//" file.</p>
      */
+    @Pure
     private static boolean isGNUStringTable(String name) {
         return GNU_STRING_TABLE_NAME.equals(name);
     }
@@ -381,6 +404,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      *
      * @see #isGNUStringTable
      */
+    @Impure
     private ArArchiveEntry readGNUStringTable(byte[] length) throws IOException {
         int bufflen = asInt(length); // Assume length will fit in an int
         namebuffer = new byte[bufflen];
@@ -400,6 +424,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      *
      * @see #isGNUStringTable
      */
+    @SideEffectFree
     private boolean isGNULongName(String name) {
         return name != null && name.matches(GNU_LONGNAME_PATTERN);
     }
